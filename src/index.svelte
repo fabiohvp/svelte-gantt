@@ -3,8 +3,7 @@
 </script>
 
 <script>
-  import { onMount } from "svelte";
-  //import {setContext} from "svelte";
+  import { createEventDispatcher } from "svelte";
   import dateUtils from "./utils.js";
   import Header from "./Header.svelte";
   import Row from "./Row.svelte";
@@ -12,48 +11,42 @@
 
   export let endDate;
   export let formatSlice = (c, s) => slice;
-  export let headers;
+  export let header;
   export let rows;
+  export let slices;
   export let slicesSize;
   export let startDate;
-  export let zoom;
 
+  const dispatch = createEventDispatcher();
   let container;
   let items;
 
   $: timezone = new Date(startDate).getTimezoneOffset() * 60 * 1000; //milliseconds
-  $: slicesCount = zoom / slicesSize;
-  $: columns = getColumns(startDate, endDate, zoom, slicesCount);
-  $: slices = getSlices(startDate, endDate, slicesSize, slicesCount);
-  $: (items = {}), slicesCount;
+  $: slices = getSlices(startDate, endDate, slicesSize);
+  $: (items = {}), slicesSize;
 
-  function getColumns(startDate, endDate, zoom, slicesCount) {
-    const _columns = [];
+  function getSlices(startDate, endDate, slicesSize) {
+    const _slices = [];
     let date = startDate;
 
     while (date <= endDate) {
-      _columns.push({
-        startDate: date,
-        endDate: date + zoom - 1
-      });
-
-      date += zoom;
+      _slices.push(
+        formatSlice({
+          startDate: date,
+          endDate: date + slicesSize - 1
+        })
+      );
+      date += slicesSize;
     }
-    return _columns;
+    return _slices;
   }
 
-  function getSlices(startDate, endDate, slicesSize, slicesCount) {
-    return columns.reduce((map, column) => {
-      const slices = [];
+  function itemOnClick(e) {
+    dispatch("click.item", e.detail);
+  }
 
-      for (let i = column.startDate; i <= column.endDate; i += slicesSize) {
-        const slice = { startDate: i, endDate: i + slicesSize - 1 };
-        slices.push(formatSlice(column, slice));
-      }
-
-      map[column.startDate] = slices;
-      return map;
-    }, {});
+  function rowOnClick(e) {
+    dispatch("click.row", e.detail);
   }
 </script>
 
@@ -70,41 +63,36 @@
   .svelte-gantt thead {
     background-color: #f9fafb;
   }
-
-  .svelte-gantt table :global(td),
-  .svelte-gantt table :global(th) {
-    margin: 0 0;
-    padding: 0 0;
-  }
 </style>
 
 <div bind:this={container} class="svelte-gantt">
   <table>
     <thead>
-      <Header {columns} {headers} {slices} {slicesCount} {slicesSize} {zoom} />
+      <Header {slices} {header} {slicesSize} />
     </thead>
     <tbody>
-      {#each rows as row, index}
+      {#each rows as row, index (row)}
         <Row
-          {columns}
-          {formatSlice}
           {index}
           bind:items
           bind:row
           {slices}
-          {slicesSize} />
+          {slicesSize}
+          {timezone}
+          on:click={rowOnClick} />
       {/each}
     </tbody>
   </table>
 
-  {#each rows as row, index}
+  {#each rows as row, index (row)}
     <Item
       {container}
       {index}
       {items}
       {row}
-      {slicesCount}
+      {slices}
       {slicesSize}
-      {timezone} />
+      {timezone}
+      on:click={itemOnClick} />
   {/each}
 </div>

@@ -1,59 +1,35 @@
 <script>
-  export let columns;
-  export let headers;
+  import { createEventDispatcher, onMount } from "svelte";
+  export let header;
   export let slices;
-  export let slicesCount;
   export let slicesSize;
-  export let zoom;
 
-  function getGroupsDays(columns) {
-    const groups = [];
-    let currentGroup;
-    let currentMonth = -1;
+  let tr;
 
-    columns.forEach(column => {
-      const month = column.date.getMonth();
+  const dispatch = createEventDispatcher();
 
-      if (month !== currentMonth) {
-        currentGroup = {
-          colspan: 1,
-          month,
-          date: column.date
-        };
-
-        groups.push(currentGroup);
-        currentMonth = month;
-      } else {
-        currentGroup.colspan++;
-      }
-    });
-
-    return groups;
-  }
+  onMount(() => {
+    header.generate(tr, slices, slicesSize);
+  });
 </script>
 
-{@html headers(columns, slices, slicesCount, slicesSize, zoom)}
+<style>
+  tr {
+    position: relative;
+  }
+</style>
 
-<!-- <tr class="row">
-  {#each row.headers as header}
+<tr class="tr" bind:this={tr}>
+  {#each header.statics as th}
+    <th class:column={true} class:static={true} {...th}>
+      {@html th.content}
+    </th>
+  {/each}
+  {#each slices as slice}
     <th
       class:column={true}
       class:header={true}
-      on:click={() => (row.expanded = !row.expanded)}
-      {...header}>
-      <div class="column header">
-        {@html header.content || ''}
-      </div>
-    </th>
+      startdate={slice.startdate}
+      enddate={slice.enddate} />
   {/each}
-
-  {#each columns as column}
-    <th
-      class="column value"
-      startDate={column.startDate}
-      endDate={column.endDate}>
-      <div class="column slices">
-      </div>
-    </th>
-  {/each}
-</tr> -->
+</tr>

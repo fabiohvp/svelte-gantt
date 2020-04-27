@@ -1,183 +1,291 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-    <title>Svelte app</title>
-    <link rel="stylesheet" href="./index.css" />
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
 
-    <style>
-      .item.first {
-        border-left: 1px solid green;
-      }
+	<title>Svelte app</title>
+	<link rel="stylesheet" href="./index.css" />
 
-      .item.last {
-        border-right: 1px solid blue;
-      }
-      */ .teste {
-        background-color: black;
-      }
+	<style>
+		body {
+			margin: 0 0;
+		}
 
-      th,
-      td {
-        border: 1px solid black;
-      }
+		th,
+		td {
+			border: 1px solid black;
+		}
 
-      span.slice {
-        border: 1px solid red;
-        min-width: 20px;
-        min-height: 30px;
-        float: left;
-      }
-    </style>
-  </head>
+		/* 
+		.column.slice {
+			padding: 2px 2px;
+		}*/
 
-  <body>
-    <div id="teste"></div>
-  </body>
+		.item {
+			background-color: blue;
+			/* margin-top: 2px; */
+		}
 
-  <script type="module" src="./index.js"></script>
-  <script type="module">
-    function addDays(date, days) {
-      const copy = new Date(Number(date));
-      copy.setDate(date.getDate() + days);
-      return copy;
-    }
+		.teste3 {
+			background-color: red;
+		}
 
-    function addHours(date, hours) {
-      const copy = new Date(Number(date));
-      copy.setHours(copy.getHours() + hours);
-      return copy;
-    }
+		.weekend {
+			background-color: brown;
+		}
+	</style>
+</head>
 
-    const padding = 15;
-    const today = new Date(2020, 3, 25, 11, 0, 0, 0);
-    today.setTime(today.getTime() - 3 * 60 * 60 * 1000); //com timezone -3
+<body>
+	<div id="teste"></div>
+</body>
 
-    let startDate = addDays(today, -padding);
-    startDate.setHours(0, 0, 0, 0);
-    startDate = startDate.getTime();
+<script type="module" src="./index.js"></script>
+<script type="module">
+	function addDays(date, days) {
+		const copy = new Date(Number(date));
+		copy.setDate(date.getDate() + days);
+		return copy;
+	}
 
-    let endDate = addDays(today, padding);
-    endDate.setHours(0, 0, 0, 0);
-    endDate = endDate.getTime();
+	function addHours(date, hours) {
+		const copy = new Date(Number(date));
+		copy.setHours(copy.getHours() + hours);
+		return copy;
+	}
 
-    const rows = [
-      {
-        headers: [
-          {
-            title: "Item 1",
-            content: "abc",
-          },
-        ],
-        items: [
-          {
-            content: "teste",
-            title: "teste",
-            class: "teste",
-            startDate: addDays(today, -1).getTime(),
-            endDate: addDays(today, 1).getTime(),
-          },
-        ],
-        expanded: false,
-        children: [
-          {
-            headers: [
-              {
-                content: "SubItem 1",
-                title: "sub 1",
-              },
-            ],
-            items: [
-              {
-                details: "teste1",
-                startDate: addDays(today, -1).getTime(),
-                endDate: addDays(today, -1).getTime(),
-              },
-            ],
-          },
-          {
-            headers: [
-              {
-                content: "SubItem 2",
-                title: "sub 2",
-              },
-            ],
-            items: [
-              {
-                details: "teste2",
-                startDate: addDays(today, 0).getTime(),
-                endDate: addHours(today, 12).getTime(),
-              },
-            ],
-          },
-          {
-            headers: [
-              {
-                content: "SubItem 3",
-                title: "sub 3",
-              },
-            ],
-            items: [
-              {
-                details: "teste3",
-                startDate: addDays(today, 1).getTime(),
-                endDate: addDays(today, 1).getTime(),
-              },
-            ],
-          },
-        ],
-      },
-    ];
+	const padding = 20;
+	const today = new Date(2020, 3, 25, 11, 0, 0, 0);
+	today.setTime(today.getTime() - 3 * 60 * 60 * 1000); //com timezone -3
 
-    const gantt = new Gantt({
-      target: document.getElementById("teste"),
-      props: {
-        formatSlice,
-        slicesSize: 1000 * 60 * 60 * 12, //12 horas
-        //slicesSize: 1000 * 60 * 60 * 24 * 1, //1 dia
-        zoom: 1000 * 60 * 60 * 24 * 1, //1 dia
-        startDate,
-        endDate,
-        headers: getHeaders(),
-        rows,
-      },
-    });
+	let startDate = addDays(today, -padding);
+	startDate.setHours(0, 0, 0, 0);
+	startDate = startDate.getTime();
 
-    // setTimeout(() => {
-    //   gantt.$set({
-    //     slicesSize: 1000 * 60 * 60 * 24 * 1,
-    //   });
-    // }, 2000);
+	let endDate = addDays(today, padding);
+	endDate.setHours(0, 0, 0, 0);
+	endDate = endDate.getTime();
 
-    function formatSlice(column, slice) {
-      return {
-        content: slice.startDate + "/" + slice.endDate,
-        title: new Date(slice.startDate),
-        ...slice,
-      };
-    }
+	const rows = [
+		{
+			headers: [
+				{
+					title: "Item 1",
+					content: "abc",
+				},
+			],
+			items: [
+				{
+					content: "teste",
+					title: "teste",
+					class: "teste",
+					startDate: addDays(today, -1).getTime(),
+					endDate: addDays(today, 1).getTime(),
+				},
+			],
+			expanded: false,
+			children: [
+				{
+					headers: [
+						{
+							content: "SubItem 1",
+							title: "sub 1",
+						},
+					],
+					items: [
+						{
+							details: "teste1",
+							startDate: addDays(today, -1).getTime(),
+							endDate: addDays(today, -1).getTime(),
+						},
+					],
+				},
+				{
+					headers: [
+						{
+							content: "SubItem 2",
+							title: "sub 2",
+						},
+					],
+					items: [
+						{
+							details: "teste2",
+							startDate: addDays(today, 0).getTime(),
+							endDate: addHours(today, 12).getTime(),
+						},
+					],
+				},
+				{
+					headers: [
+						{
+							content: "SubItem 3",
+							title: "sub 3",
+						},
+					],
+					items: [
+						{
+							details: "teste3",
+							startDate: addDays(today, 1).getTime(),
+							endDate: addDays(today, 1).getTime(),
+						},
+					],
+				},
+			],
+		},
+	];
 
-    function getHeaders() {
-      const monthNames = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ];
+	const gantt = new Gantt({
+		target: document.getElementById("teste"),
+		props: {
+			formatSlice,
+			//slicesSize: 1000 * 60 * 60 * 24 * 365, //1 ano,
+			//slicesSize: 1000 * 60 * 60 * 24 * 30, //30 dias
+			//slicesSize: 1000 * 60 * 60 * 24 * 7, //7 dias
+			slicesSize: 1000 * 60 * 60 * 24 * 1, //1 dia
+			//slicesSize: 1000 * 60 * 60 * 1, //1 hora
+			startDate,
+			endDate,
+			header: getHeader(),
+			rows,
+		},
+	});
 
-      return (columns, slices, slicesCount, slicesSize, zoom) => {
-        return "<tr><th>ij</th></tr>";
-      };
-    }
-  </script>
+	gantt.$on('click.item', console.log);
+	gantt.$on('click.row', console.log);
+
+	// setTimeout(() => {
+	// 	gantt.$set({
+	// 		slicesSize: 1000 * 60 * 60 * 24 * 1,
+	// 	});
+	// 	rows[0].items.push(
+	// 		{
+	// 			content: "teste3",
+	// 			title: "teste3",
+	// 			class: "teste3",
+	// 			startDate: addDays(today, 1).getTime(),
+	// 			endDate: addDays(today, 2).getTime(),
+	// 		},
+	// 	);
+	// 	gantt.$set({ rows });
+	// }, 2000);
+
+	function formatSlice(slice) {
+		// const day = new Date(slice.startDate).getDay();
+		// const isWeekend = (day === 6) || (day === 0);
+
+		return {
+			content: slice.startDate + "/" + slice.endDate,
+			title: new Date(slice.startDate),
+			...slice,
+			// class: isWeekend ? "weekend" : ""
+		};
+	}
+
+	import dateUtils from "./src/utils.js";
+	function getHeader() {
+		const monthNames = [
+			"January",
+			"February",
+			"March",
+			"April",
+			"May",
+			"June",
+			"July",
+			"August",
+			"September",
+			"October",
+			"November",
+			"December",
+		];
+
+		const year = 1000 * 60 * 60 * 24 * 365;
+		const month = 1000 * 60 * 60 * 24 * 30;
+		const week = 1000 * 60 * 60 * 24 * 7;
+		const day = 1000 * 60 * 60 * 24 * 1;
+		const hour = 1000 * 60 * 60 * 12 * 1;
+
+		return {
+			statics: [{
+				content: "nome"
+			}],
+			generate: (row, slices, slicesSize) => {
+				console.log(row);
+				const ths = [];
+				let lastDate = new Date(slices[0].startDate);
+				lastDate.setHours(lastDate.getHours() - 1);
+
+				slices.forEach(slice => {
+					const content = [];
+					let currentDate = new Date(slice.startDate);
+					let colspan = 0;
+
+					if (slicesSize >= year) {
+						if (lastDate.getFullYear() !== currentDate.getFullYear()) {
+							content.push(`<div class="cell-year">${currentDate.getFullYear()}</div>`);
+						}
+					}
+					else {
+						if (slicesSize >= month) {
+							if (lastDate.getMonth() !== currentDate.getMonth()) {
+								content.push(`<div class="cell-year">${currentDate.getFullYear()}</div><div class="cell-month">${currentDate.getMonth() + 1}</div>`);
+							}
+						}
+						else if (slicesSize >= week) {
+							if (dateUtils.getNumberOfWeek(lastDate) !== dateUtils.getNumberOfWeek(currentDate)) {
+								content.push(`<div class="cell-month-year">${currentDate.getMonth() + 1} ${currentDate.getFullYear()}</div><div class="cell-week">week</div>`);
+							}
+						}
+						else if (slicesSize >= day) {
+							if (lastDate.getDate() !== currentDate.getDate()) {
+								content.push(`<div class="cell-month-year">${currentDate.getMonth() + 1} ${currentDate.getFullYear()}</div><div class="cell-day">${currentDate.getDate()}</div>`);
+							}
+						}
+						else {
+							if (lastDate.getHours() !== currentDate.getHours()) {
+								content.push(`<div class="cell-day-month-year">${currentDate.getDate()} ${currentDate.getMonth() + 1} ${currentDate.getFullYear()}</div><div class="cell-hour">${currentDate.getHours()}</div>`);
+							}
+						}
+					}
+
+					ths.push({
+						content: `<div class="cell">${content.join("")}</div>`
+					});
+
+					colspan++;
+					lastDate = currentDate;
+				});
+
+				return ths;
+			}
+		};
+	}
+
+	function getGroupsDays(columns) {
+		const groups = [];
+		let currentGroup;
+		let currentMonth = -1;
+
+		columns.forEach(column => {
+			const month = column.date.getMonth();
+
+			if (month !== currentMonth) {
+				currentGroup = {
+					colspan: 1,
+					month,
+					date: column.date
+				};
+
+				groups.push(currentGroup);
+				currentMonth = month;
+			} else {
+				currentGroup.colspan++;
+			}
+		});
+
+		return groups;
+	}
+</script>
+
 </html>

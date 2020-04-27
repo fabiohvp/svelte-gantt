@@ -1,11 +1,15 @@
 <script>
+  import { createEventDispatcher } from "svelte";
+  import dateUtils from "./utils.js";
   export let container;
   export let index;
   export let items;
   export let row;
-  export let slicesCount;
+  export let slices;
   export let slicesSize;
   export let timezone;
+
+  const dispatch = createEventDispatcher();
 
   function offset(el) {
     var rect = el.getBoundingClientRect(),
@@ -20,12 +24,19 @@
   }
 
   function getStyle(items, item) {
-    //por que precisa do timezone aqui? não faço idéia
-    const startDate = item.startDate - (item.startDate % slicesSize) + timezone;
-    const endDate = item.endDate - (item.endDate % slicesSize) + timezone;
+    const startDate = dateUtils.getDateWithTimezone(
+      item.startDate,
+      slicesSize,
+      timezone
+    );
+    const endDate = dateUtils.getDateWithTimezone(
+      item.endDate,
+      slicesSize,
+      timezone
+    );
 
-    const firstItem = items[index + "," + startDate];
-    const lastItem = items[index + "," + endDate];
+    const firstItem = items[`${index},${startDate}`];
+    const lastItem = items[`${index},${endDate}`];
 
     if (firstItem && lastItem) {
       const firstItemCoords = offset(firstItem);
@@ -41,21 +52,35 @@
     }
     return "";
   }
+
+  function onChildrenClick(e) {
+    dispatch("click", e.detail);
+  }
+
+  function onClick(e, item) {
+    dispatch("click", {
+      event: e,
+      item,
+      slice:
+        slices[
+          dateUtils.getDateWithTimezone(item.startDate, slicesSize, timezone)
+        ]
+    });
+  }
 </script>
 
 <style>
   .item {
     position: absolute;
-    min-width: 20px;
-    height: 20px;
-    background-color: orange;
+    height: 1.5em;
     display: none;
     opacity: 0.6;
   }
 </style>
 
-{#each row.items as item}
+{#each row.items as item (item)}
   <div
+    on:click={e => onClick(e, item)}
     class:item={true}
     startDate={item.startDate}
     endDate={item.endDate}
@@ -66,14 +91,15 @@
 {/each}
 
 {#if row.expanded && row.children}
-  {#each row.children as child, index2}
+  {#each row.children as child, index2 (child)}
     <svelte:self
       {container}
-      index={index + ',' + index2}
+      index={`${index},${index2}`}
       {items}
       row={child}
-      {slicesCount}
+      {slices}
       {slicesSize}
-      {timezone} />
+      {timezone}
+      on:click={e => onChildrenClick(e)} />
   {/each}
 {/if}

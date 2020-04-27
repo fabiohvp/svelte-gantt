@@ -324,16 +324,16 @@ table {
   }
 }
 
-.flex {
-  display: flex;
-}
-
 .table {
   display: table;
 }
 
 .hidden {
   display: none;
+}
+
+.static {
+  position: static;
 }
 
 .absolute {

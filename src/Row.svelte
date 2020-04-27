@@ -1,21 +1,45 @@
 <script>
-  export let columns;
-  export let formatSlice;
+  import { createEventDispatcher } from "svelte";
+  import dateUtils from "./utils.js";
   export let index;
   export let items;
   export let row;
   export let slices;
   export let slicesSize;
+  export let timezone;
+
+  const dispatch = createEventDispatcher();
+
+  function getItems(slice) {
+    const items = [];
+    row.items.forEach(item => {
+      const startDate = dateUtils.getDateWithTimezone(
+        item.startDate,
+        slicesSize,
+        timezone
+      );
+
+      if (slice.startDate === startDate) {
+        items.push(item);
+      }
+    });
+    return items;
+  }
+
+  function onChildrenClick(e) {
+    dispatch("click", e.detail);
+  }
+
+  function onClick(e, slice) {
+    dispatch("click", {
+      event: e,
+      slice,
+      items: getItems(slice)
+    });
+  }
 </script>
 
 <style>
-  .column.slices {
-    display: flex;
-    flex-direction: row;
-    overflow: hidden;
-    height: 100%;
-  }
-
   div.column.header {
     height: 1.5em;
     overflow: hidden;
@@ -23,7 +47,7 @@
 </style>
 
 <tr class="row">
-  {#each row.headers as header}
+  {#each row.headers as header (header)}
     <td
       class:column={true}
       class:header={true}
@@ -35,25 +59,16 @@
     </td>
   {/each}
 
-  {#each columns as column}
+  {#each slices as slice (slice)}
     <td
-      class="column value"
-      startDate={column.startDate}
-      endDate={column.endDate}>
-      <div class="column slices">
-        {#each slices[column.startDate] as slice}
-          <span
-            bind:this={items[index + ',' + slice.startDate]}
-            on:click={() => console.log(slice, column)}
-            class:column={true}
-            class:slice={true}
-            startDate={slice.startDate}
-            endDate={slice.endDate}
-            {...slice}>
-            {@html slice.content || ''}
-          </span>
-        {/each}
-      </div>
+      bind:this={items[`${index},${slice.startDate}`]}
+      on:click={e => onClick(e, slice)}
+      class:column={true}
+      class:slice={true}
+      startDate={slice.startDate}
+      endDate={slice.endDate}
+      {...slice}>
+      {@html slice.content || ''}
     </td>
   {/each}
 </tr>
@@ -61,12 +76,12 @@
 {#if row.expanded && row.children}
   {#each row.children as child, index2}
     <svelte:self
-      {columns}
-      {formatSlice}
-      index={index + ',' + index2}
+      index={`${index},${index2}`}
       bind:items
       bind:row={child}
       {slices}
-      {slicesSize} />
+      {slicesSize}
+      {timezone}
+      on:click={e => onChildrenClick(e)} />
   {/each}
 {/if}
