@@ -1,23 +1,20 @@
 <script>
   import { createEventDispatcher } from "svelte";
-  import dateUtils from "./utils.js";
   export let index;
-  export let items;
+  export let cells;
+  export let getDateWithTimezone;
   export let row;
   export let slices;
   export let slicesSize;
   export let timezone;
+  export let zoom;
 
   const dispatch = createEventDispatcher();
 
   function getItems(slice) {
     const items = [];
     row.items.forEach(item => {
-      const startDate = dateUtils.getDateWithTimezone(
-        item.startDate,
-        slicesSize,
-        timezone
-      );
+      const startDate = getDateWithTimezone(item.startDate);
 
       if (slice.startDate === startDate) {
         items.push(item);
@@ -61,7 +58,7 @@
 
   {#each slices as slice (slice)}
     <td
-      bind:this={items[`${index},${slice.startDate}`]}
+      bind:this={cells[`${index},${slice.startDate}`]}
       on:click={e => onClick(e, slice)}
       class:column={true}
       class:slice={true}
@@ -77,11 +74,13 @@
   {#each row.children as child, index2}
     <svelte:self
       index={`${index},${index2}`}
-      bind:items
+      bind:cells
+      {getDateWithTimezone}
       bind:row={child}
       {slices}
       {slicesSize}
       {timezone}
+      {zoom}
       on:click={e => onChildrenClick(e)} />
   {/each}
 {/if}

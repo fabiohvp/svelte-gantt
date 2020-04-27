@@ -25,11 +25,11 @@
       {@html th.content}
     </th>
   {/each}
-  {#each slices as slice}
+  <!-- {#each slices as slice}
     <th
       class:column={true}
       class:header={true}
       startdate={slice.startdate}
       enddate={slice.enddate} />
-  {/each}
+  {/each} -->
 </tr>

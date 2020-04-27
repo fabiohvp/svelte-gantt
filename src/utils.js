@@ -17,8 +17,15 @@ export default {
 
 		return new Date(y, 0, d);
 	},
-	getDateWithTimezone: (date, slicesSize, timezone) => {
-		//por que precisa do timezone aqui? não faço idéia
-		return date - (date % slicesSize) + timezone;
+	offset: (el) => {
+		var rect = el.getBoundingClientRect(),
+			scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
+			scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+		return {
+			top: rect.top + scrollTop,
+			left: rect.left + scrollLeft,
+			bottom: rect.bottom + scrollTop,
+			right: rect.right + scrollLeft
+		};
 	}
 };

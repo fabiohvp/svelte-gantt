@@ -13,15 +13,14 @@
 			margin: 0 0;
 		}
 
+		table>thead>tr {
+			height: 54px;
+		}
+
 		th,
 		td {
 			border: 1px solid black;
 		}
-
-		/* 
-		.column.slice {
-			padding: 2px 2px;
-		}*/
 
 		.item {
 			background-color: blue;
@@ -56,8 +55,8 @@
 		return copy;
 	}
 
-	const padding = 20;
-	const today = new Date(2020, 3, 25, 11, 0, 0, 0);
+	const padding = 30;
+	const today = new Date(2020, 3, 1, 0, 0, 0, 0);
 	today.setTime(today.getTime() - 3 * 60 * 60 * 1000); //com timezone -3
 
 	let startDate = addDays(today, -padding);
@@ -141,14 +140,15 @@
 		props: {
 			formatSlice,
 			//slicesSize: 1000 * 60 * 60 * 24 * 365, //1 ano,
-			//slicesSize: 1000 * 60 * 60 * 24 * 30, //30 dias
+			slicesSize: 1000 * 60 * 60 * 24 * 30, //30 dias
 			//slicesSize: 1000 * 60 * 60 * 24 * 7, //7 dias
-			slicesSize: 1000 * 60 * 60 * 24 * 1, //1 dia
+			//slicesSize: 1000 * 60 * 60 * 24 * 1, //1 dia
 			//slicesSize: 1000 * 60 * 60 * 1, //1 hora
 			startDate,
 			endDate,
 			header: getHeader(),
 			rows,
+			zoom: "month"
 		},
 	});
 
@@ -157,7 +157,7 @@
 
 	// setTimeout(() => {
 	// 	gantt.$set({
-	// 		slicesSize: 1000 * 60 * 60 * 24 * 1,
+	// 		slicesSize: 1000 * 60 * 60 * 12 * 1,
 	// 	});
 	// 	rows[0].items.push(
 	// 		{
@@ -183,7 +183,7 @@
 		};
 	}
 
-	import dateUtils from "./src/utils.js";
+	import utils from "./src/utils.js";
 	function getHeader() {
 		const monthNames = [
 			"January",
@@ -204,62 +204,79 @@
 		const month = 1000 * 60 * 60 * 24 * 30;
 		const week = 1000 * 60 * 60 * 24 * 7;
 		const day = 1000 * 60 * 60 * 24 * 1;
-		const hour = 1000 * 60 * 60 * 12 * 1;
+		const hour = 1000 * 60 * 60 * 1;
 
 		return {
 			statics: [{
 				content: "nome"
 			}],
 			generate: (row, slices, slicesSize) => {
-				console.log(row);
-				const ths = [];
 				let lastDate = new Date(slices[0].startDate);
+				lastDate.setYear(lastDate.getFullYear() - 1);
+				lastDate.setMonth(lastDate.getMonth() - 1);
+				lastDate.setDate(lastDate.getDate() - 8);
 				lastDate.setHours(lastDate.getHours() - 1);
+				let th = {};
 
-				slices.forEach(slice => {
-					const content = [];
-					let currentDate = new Date(slice.startDate);
-					let colspan = 0;
-
-					if (slicesSize >= year) {
+				if (slicesSize >= year) {
+					slices.forEach(slice => {
+						const currentDate = new Date(slice.startDate);
 						if (lastDate.getFullYear() !== currentDate.getFullYear()) {
-							content.push(`<div class="cell-year">${currentDate.getFullYear()}</div>`);
+							th = getColumnHeader();
+							row.appendChild(th);
+							th.innerHTML = `<div class="header-year">${currentDate.getFullYear()}</div>`;
+							row.appendChild(th);
 						}
-					}
-					else {
-						if (slicesSize >= month) {
-							if (lastDate.getMonth() !== currentDate.getMonth()) {
-								content.push(`<div class="cell-year">${currentDate.getFullYear()}</div><div class="cell-month">${currentDate.getMonth() + 1}</div>`);
-							}
-						}
-						else if (slicesSize >= week) {
-							if (dateUtils.getNumberOfWeek(lastDate) !== dateUtils.getNumberOfWeek(currentDate)) {
-								content.push(`<div class="cell-month-year">${currentDate.getMonth() + 1} ${currentDate.getFullYear()}</div><div class="cell-week">week</div>`);
-							}
-						}
-						else if (slicesSize >= day) {
-							if (lastDate.getDate() !== currentDate.getDate()) {
-								content.push(`<div class="cell-month-year">${currentDate.getMonth() + 1} ${currentDate.getFullYear()}</div><div class="cell-day">${currentDate.getDate()}</div>`);
-							}
-						}
-						else {
-							if (lastDate.getHours() !== currentDate.getHours()) {
-								content.push(`<div class="cell-day-month-year">${currentDate.getDate()} ${currentDate.getMonth() + 1} ${currentDate.getFullYear()}</div><div class="cell-hour">${currentDate.getHours()}</div>`);
-							}
-						}
-					}
-
-					ths.push({
-						content: `<div class="cell">${content.join("")}</div>`
 					});
-
-					colspan++;
-					lastDate = currentDate;
-				});
-
-				return ths;
+				}
+				else if (slicesSize >= month) {
+					slices.forEach(slice => {
+						const currentDate = new Date(slice.startDate);
+						if (lastDate.getFullYear() !== currentDate.getFullYear()) {
+							th = getColumnHeader();
+							th.setAttribute("colspan", 12 - currentDate.getMonth());
+							row.appendChild(th);
+							th.innerHTML = `<div class="header-months">${currentDate.getFullYear()}</div>`;
+						}
+						th.innerHTML += `<span class="header-month">${currentDate.getMonth() + 1}</span>`;
+						lastDate = currentDate;
+					});
+				}
+				else if (slicesSize >= day) {
+					slices.forEach(slice => {
+						const currentDate = new Date(slice.startDate);
+						if (lastDate.getMonth() !== currentDate.getMonth()) {
+							th = getColumnHeader();
+							th.setAttribute("colspan", Math.ceil(utils.getDaysInMonth(currentDate) - currentDate.getDate()) + 1);
+							row.appendChild(th);
+							th.innerHTML = `<div class="header-days">${currentDate.getMonth() + 1} ${currentDate.getFullYear()}</div>`;
+						}
+						th.innerHTML += `<span class="header-day">${currentDate.getDate()}</span>`;
+						lastDate = currentDate;
+					});
+				}
+				else if (slicesSize >= hour) {
+					slices.forEach(slice => {
+						const currentDate = new Date(slice.startDate);
+						if (lastDate.getDate() !== currentDate.getDate()) {
+							th = getColumnHeader();
+							th.setAttribute("colspan", 24 - currentDate.getHours());
+							row.appendChild(th);
+							th.innerHTML = `<div class="header-hours">${currentDate.getDate() + 1} ${currentDate.getMonth() + 1} ${currentDate.getFullYear()}</div>`;
+						}
+						th.innerHTML += `<span class="header-hour">${currentDate.getHours() + 1}</span>`;
+						lastDate = currentDate;
+					});
+				}
 			}
 		};
+	}
+
+	function getColumnHeader(html) {
+		const th = document.createElement("th");
+		th.className = "column header slice";
+		th.innerHTML = html;
+		return th;
 	}
 
 	function getGroupsDays(columns) {
