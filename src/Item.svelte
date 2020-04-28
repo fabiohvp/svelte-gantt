@@ -2,18 +2,16 @@
   import { createEventDispatcher } from "svelte";
   export let container;
   export let index;
-  export let cells;
   export let getCoordinates;
-  export let getDateWithTimezone;
+  export let getDateRelative;
   export let row;
   export let slices;
-  export let slicesSize;
   export let timezone;
   export let zoom;
 
   const dispatch = createEventDispatcher();
 
-  function getStyle(cells, item) {
+  function getStyle(item) {
     const coords = getCoordinates(index, item.startDate, item.endDate);
     if (coords) {
       return `display:block;top:${coords.top}px;left:${coords.left}px;height:${coords.height}px;width:${coords.width}px;`;
@@ -29,7 +27,7 @@
     dispatch("click", {
       event: e,
       item,
-      slice: slices[getDateWithTimezone(item.startDate)]
+      slice: slices[getDateRelative[zoom](item.startDate)]
     });
   }
 </script>
@@ -49,7 +47,7 @@
     class:item={true}
     startDate={item.startDate}
     endDate={item.endDate}
-    style={getStyle(cells, item)}
+    style={getStyle(item)}
     {...item}>
     {@html item.content || ''}
   </div>
@@ -60,12 +58,10 @@
     <svelte:self
       {container}
       index={`${index},${index2}`}
-      {cells}
       {getCoordinates}
-      {getDateWithTimezone}
+      {getDateRelative}
       row={child}
       {slices}
-      {slicesSize}
       {timezone}
       {zoom}
       on:click={e => onChildrenClick(e)} />

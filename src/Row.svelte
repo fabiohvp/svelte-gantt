@@ -1,11 +1,10 @@
 <script>
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   export let index;
   export let cells;
-  export let getDateWithTimezone;
+  export let getDateRelative;
   export let row;
   export let slices;
-  export let slicesSize;
   export let timezone;
   export let zoom;
 
@@ -14,7 +13,7 @@
   function getItems(slice) {
     const items = [];
     row.items.forEach(item => {
-      const startDate = getDateWithTimezone(item.startDate);
+      const startDate = getDateRelative[zoom](item.startDate);
 
       if (slice.startDate === startDate) {
         items.push(item);
@@ -43,7 +42,7 @@
   }
 </style>
 
-<tr class="row">
+<tr class:even={index % 2 === 0} class:odd={index % 2 !== 0}>
   {#each row.headers as header (header)}
     <td
       class:column={true}
@@ -56,18 +55,22 @@
     </td>
   {/each}
 
-  {#each slices as slice (slice)}
-    <td
-      bind:this={cells[`${index},${slice.startDate}`]}
-      on:click={e => onClick(e, slice)}
-      class:column={true}
-      class:slice={true}
-      startDate={slice.startDate}
-      endDate={slice.endDate}
-      {...slice}>
-      {@html slice.content || ''}
-    </td>
-  {/each}
+  <td colspan={slices.length}>
+    <div class="cell">
+      {#each slices as slice (slice)}
+        <span
+          bind:this={cells[`${index},${slice.startDate}`]}
+          on:click={e => onClick(e, slice)}
+          class:column={true}
+          class:slice={true}
+          startDate={slice.startDate}
+          endDate={slice.endDate}
+          {...slice}>
+          {@html slice.content || ''}
+        </span>
+      {/each}
+    </div>
+  </td>
 </tr>
 
 {#if row.expanded && row.children}
@@ -75,10 +78,9 @@
     <svelte:self
       index={`${index},${index2}`}
       bind:cells
-      {getDateWithTimezone}
+      {getDateRelative}
       bind:row={child}
       {slices}
-      {slicesSize}
       {timezone}
       {zoom}
       on:click={e => onChildrenClick(e)} />
