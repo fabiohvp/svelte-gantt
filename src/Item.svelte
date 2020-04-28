@@ -3,7 +3,7 @@
   export let container;
   export let index;
   export let getCoordinates;
-  export let getDateRelative;
+  export let getRelativeDate;
   export let row;
   export let slices;
   export let timezone;
@@ -27,7 +27,7 @@
     dispatch("click", {
       event: e,
       item,
-      slice: slices[getDateRelative[zoom](item.startDate)]
+      slice: slices[getRelativeDate[zoom](item.startDate)]
     });
   }
 </script>
@@ -59,7 +59,7 @@
       {container}
       index={`${index},${index2}`}
       {getCoordinates}
-      {getDateRelative}
+      {getRelativeDate}
       row={child}
       {slices}
       {timezone}

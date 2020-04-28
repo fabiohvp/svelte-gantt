@@ -2,7 +2,7 @@
   import { createEventDispatcher, onMount } from "svelte";
   export let index;
   export let cells;
-  export let getDateRelative;
+  export let getRelativeDate;
   export let row;
   export let slices;
   export let timezone;
@@ -13,7 +13,7 @@
   function getItems(slice) {
     const items = [];
     row.items.forEach(item => {
-      const startDate = getDateRelative[zoom](item.startDate);
+      const startDate = getRelativeDate[zoom](item.startDate);
 
       if (slice.startDate === startDate) {
         items.push(item);
@@ -78,7 +78,7 @@
     <svelte:self
       index={`${index},${index2}`}
       bind:cells
-      {getDateRelative}
+      {getRelativeDate}
       bind:row={child}
       {slices}
       {timezone}

@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher, onMount } from "svelte";
+  import utils from "./utils.js";
   export let cells;
   export let getCoordinates;
   export let getHeader;
@@ -8,12 +9,13 @@
   export let zoom;
 
   const dispatch = createEventDispatcher();
+  let tr;
 
   function getStyle(item, cells) {
     const coords = getCoordinates(0, item.startDate, item.endDate);
-    console.log(coords);
     if (coords) {
-      return `display:block;top:${coords.top}px;left:${coords.left}px;height:${coords.height}px;width:${coords.width}px;`;
+      const trCoords = utils.offset(tr);
+      return `display:block;top:${trCoords.top}px;left:${coords.left}px;height:${trCoords.height}px;width:${coords.width}px;`;
     }
     return "";
   }
@@ -30,7 +32,7 @@
   }
 </style>
 
-<tr>
+<tr bind:this={tr}>
   <th>
     {#each header as header}
       <div

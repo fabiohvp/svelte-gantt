@@ -11,7 +11,7 @@
 
   export let endDate;
   export let formatSlice = (c, s) => slice;
-  export let getDateRelative = {
+  export let getRelativeDate = {
     year: date => {
       let newDate = new Date(date);
       newDate = new Date(newDate.getFullYear(), 0, 1);
@@ -65,34 +65,35 @@
       });
     },
     day: slices => {
-      let lastDate = new Date(slices[0].startDate);
+      let date = new Date(slices[0].startDate - 1);
       let groups = [];
       let item = {
         startDate: slices[0].startDate
       };
       let currentDate;
 
+      const addItem = currentDate => {
+        item.endDate = currentDate.getTime();
+        item.content = `${currentDate.getMonth() +
+          1} ${currentDate.getFullYear()}`;
+        groups.push(item);
+      };
+
       slices.forEach(slice => {
         currentDate = new Date(slice.startDate);
 
-        if (lastDate.getMonth() !== currentDate.getMonth()) {
-          item.endDate = currentDate.getTime();
-          item.content = `${currentDate.getMonth() +
-            1} ${currentDate.getFullYear()}`;
-          groups.push(item);
+        if (date.getMonth() !== currentDate.getMonth()) {
+          addItem(currentDate);
 
           item = {
-            startDate: utils.addDays(currentDate, 1).getTime()
+            startDate: currentDate.getTime()
           };
         }
 
-        lastDate = currentDate;
+        date = currentDate;
       });
 
-      item.endDate = currentDate.getTime();
-      item.content = `${currentDate.getMonth() +
-        1} ${currentDate.getFullYear()}`;
-      groups.push(item);
+      addItem(currentDate);
       return groups;
     },
     hour: (row, slices) => {
@@ -222,8 +223,8 @@
   }
 
   export function getCoordinates(index, startDate, endDate) {
-    const startDateWithTimezone = getDateRelative[zoom](startDate);
-    const endDateWithTimezone = getDateRelative[zoom](endDate);
+    const startDateWithTimezone = getRelativeDate[zoom](startDate);
+    const endDateWithTimezone = getRelativeDate[zoom](endDate);
 
     const startCell = cells[`${index},${startDateWithTimezone}`];
     const endCell = cells[`${index},${endDateWithTimezone}`];
@@ -327,7 +328,7 @@
         <Row
           {index}
           bind:cells
-          {getDateRelative}
+          {getRelativeDate}
           bind:row
           {slices}
           {timezone}
@@ -342,7 +343,7 @@
       {container}
       {index}
       {getCoordinates}
-      {getDateRelative}
+      {getRelativeDate}
       {row}
       {slices}
       {timezone}

@@ -1,43 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-    <title>Svelte app</title>
-    <link rel="stylesheet" href="./index.css" />
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
 
-    <style>
-      body {
-        margin: 0 0;
-      }
+	<title>Svelte app</title>
+	<link rel="stylesheet" href="./index.css" />
 
-      table > thead > tr {
-        height: 50px;
-      }
+	<style>
+		body {
+			margin: 0 0;
+		}
 
-      table td {
-        padding: 0 0;
-      }
+		table td {
+			padding: 0 0;
+		}
 
-      .slice {
-        border: 1px solid black;
-      }
+		.slice {
+			border: 1px solid black;
+		}
 
-      .item {
-        background-color: blue;
-        /* margin-top: 2px; */
-      }
+		.item {
+			background-color: blue;
+			/* margin-top: 2px; */
+		}
 
-      .teste3 {
-        background-color: red;
-      }
+		.teste3 {
+			background-color: red;
+		}
 
-      .weekend {
-        background-color: brown;
-      }
+		.weekend {
+			background-color: brown;
+		}
 
-      /* tr {
+		/* tr {
         display: flex;
         width: 1000px;
       }
@@ -52,197 +49,198 @@
       td.column.header {
         width: 300px;
       } */
-    </style>
-  </head>
+	</style>
+</head>
 
-  <body>
-    <div id="teste"></div>
-  </body>
+<body>
+	<div id="teste"></div>
+</body>
 
-  <script type="module" src="./index.js"></script>
-  <script type="module">
-    function addDays(date, days) {
-      const copy = new Date(Number(date));
-      copy.setDate(date.getDate() + days);
-      return copy;
-    }
+<script type="module" src="./index.js"></script>
+<script type="module">
+	function addDays(date, days) {
+		const copy = new Date(Number(date));
+		copy.setDate(date.getDate() + days);
+		return copy;
+	}
 
-    function addHours(date, hours) {
-      const copy = new Date(Number(date));
-      copy.setHours(copy.getHours() + hours);
-      return copy;
-    }
+	function addHours(date, hours) {
+		const copy = new Date(Number(date));
+		copy.setHours(copy.getHours() + hours);
+		return copy;
+	}
 
-    const padding = 2;
-    const today = new Date(2020, 3, 1, 0, 0, 0, 0);
-    today.setTime(today.getTime() - 3 * 60 * 60 * 1000); //com timezone -3
+	const padding = 2;
+	const today = new Date(2020, 3, 1, 0, 0, 0, 0);
+	today.setTime(today.getTime() - 3 * 60 * 60 * 1000); //com timezone -3
 
-    let startDate = addDays(today, -padding);
-    startDate.setHours(0, 0, 0, 0);
-    startDate = startDate.getTime();
+	let startDate = addDays(today, -padding);
+	startDate.setHours(0, 0, 0, 0);
+	startDate = startDate.getTime();
 
-    let endDate = addDays(today, padding);
-    endDate.setHours(0, 0, 0, 0);
-    endDate = endDate.getTime();
+	let endDate = addDays(today, padding);
+	endDate.setHours(0, 0, 0, 0);
+	endDate = endDate.getTime();
 
-    const rows = [
-      {
-        headers: [
-          {
-            title: "Item 1",
-            content: "abc",
-          },
-        ],
-        items: [
-          {
-            content: "teste",
-            title: "teste",
-            class: "teste",
-            startDate: addDays(today, -1).getTime(),
-            endDate: addDays(today, 1).getTime(),
-          },
-        ],
-        expanded: false,
-        children: [
-          {
-            headers: [
-              {
-                content: "SubItem 1",
-                title: "sub 1",
-              },
-            ],
-            items: [
-              {
-                details: "teste1",
-                startDate: addDays(today, -1).getTime(),
-                endDate: addDays(today, -1).getTime(),
-              },
-            ],
-          },
-          {
-            headers: [
-              {
-                content: "SubItem 2",
-                title: "sub 2",
-              },
-            ],
-            items: [
-              {
-                details: "teste2",
-                startDate: addDays(today, 0).getTime(),
-                endDate: addHours(today, 12).getTime(),
-              },
-            ],
-          },
-          {
-            headers: [
-              {
-                content: "SubItem 3",
-                title: "sub 3",
-              },
-            ],
-            items: [
-              {
-                details: "teste3",
-                startDate: addDays(today, 1).getTime(),
-                endDate: addDays(today, 1).getTime(),
-              },
-            ],
-          },
-        ],
-      },
-    ];
+	const rows = [
+		{
+			headers: [
+				{
+					title: "Item 1",
+					content: "abc",
+				},
+			],
+			items: [
+				{
+					content: "teste",
+					title: "teste",
+					class: "teste",
+					startDate: addDays(today, -1).getTime(),
+					endDate: addDays(today, 1).getTime(),
+				},
+			],
+			expanded: false,
+			children: [
+				{
+					headers: [
+						{
+							content: "SubItem 1",
+							title: "sub 1",
+						},
+					],
+					items: [
+						{
+							details: "teste1",
+							startDate: addDays(today, -1).getTime(),
+							endDate: addDays(today, -1).getTime(),
+						},
+					],
+				},
+				{
+					headers: [
+						{
+							content: "SubItem 2",
+							title: "sub 2",
+						},
+					],
+					items: [
+						{
+							details: "teste2",
+							startDate: addDays(today, 0).getTime(),
+							endDate: addHours(today, 12).getTime(),
+						},
+					],
+				},
+				{
+					headers: [
+						{
+							content: "SubItem 3",
+							title: "sub 3",
+						},
+					],
+					items: [
+						{
+							details: "teste3",
+							startDate: addDays(today, 1).getTime(),
+							endDate: addDays(today, 1).getTime(),
+						},
+					],
+				},
+			],
+		},
+	];
 
-    const gantt = new Gantt({
-      target: document.getElementById("teste"),
-      props: {
-        formatSlice,
-        startDate,
-        endDate,
-        header: getHeader(),
-        rows,
-        zoom: "day",
-      },
-    });
+	const gantt = new Gantt({
+		target: document.getElementById("teste"),
+		props: {
+			formatSlice,
+			startDate,
+			endDate,
+			header: getHeader(),
+			rows,
+			zoom: "day",
+		},
+	});
 
-    gantt.$on("click.item", console.log);
-    gantt.$on("click.row", console.log);
+	gantt.$on("click.item", console.log);
+	gantt.$on("click.row", console.log);
 
-    // setTimeout(() => {
-    // 	gantt.$set({
-    // 		zoom: "day",
-    // 	});
-    // 	rows[0].items.push(
-    // 		{
-    // 			content: "teste3",
-    // 			title: "teste3",
-    // 			class: "teste3",
-    // 			startDate: addDays(today, 1).getTime(),
-    // 			endDate: addDays(today, 2).getTime(),
-    // 		},
-    // 	);
-    // 	gantt.$set({ rows });
-    // }, 2000);
+	// setTimeout(() => {
+	// 	gantt.$set({
+	// 		zoom: "day",
+	// 	});
+	// 	rows[0].items.push(
+	// 		{
+	// 			content: "teste3",
+	// 			title: "teste3",
+	// 			class: "teste3",
+	// 			startDate: addDays(today, 1).getTime(),
+	// 			endDate: addDays(today, 2).getTime(),
+	// 		},
+	// 	);
+	// 	gantt.$set({ rows });
+	// }, 2000);
 
-    function formatSlice(slice) {
-      // const day = new Date(slice.startDate).getDay();
-      // const isWeekend = (day === 6) || (day === 0);
+	function formatSlice(slice) {
+		// const day = new Date(slice.startDate).getDay();
+		// const isWeekend = (day === 6) || (day === 0);
 
-      return {
-        content: "&nbsp;", //slice.startDate + "/" + slice.endDate,
-        title: new Date(slice.startDate),
-        ...slice,
-        // class: isWeekend ? "weekend" : ""
-      };
-    }
+		return {
+			content: "&nbsp;", //slice.startDate + "/" + slice.endDate,
+			title: new Date(slice.startDate),
+			...slice,
+			// class: isWeekend ? "weekend" : ""
+		};
+	}
 
-    import utils from "./src/utils.js";
-    function getHeader() {
-      const monthNames = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ];
+	import utils from "./src/utils.js";
+	function getHeader() {
+		const monthNames = [
+			"January",
+			"February",
+			"March",
+			"April",
+			"May",
+			"June",
+			"July",
+			"August",
+			"September",
+			"October",
+			"November",
+			"December",
+		];
 
-      return [
-        {
-          content: "nome",
-        },
-      ];
-    }
+		return [
+			{
+				content: "nome",
+			},
+		];
+	}
 
-    function getGroupsDays(columns) {
-      const groups = [];
-      let currentGroup;
-      let currentMonth = -1;
+	function getGroupsDays(columns) {
+		const groups = [];
+		let currentGroup;
+		let currentMonth = -1;
 
-      columns.forEach((column) => {
-        const month = column.date.getMonth();
+		columns.forEach((column) => {
+			const month = column.date.getMonth();
 
-        if (month !== currentMonth) {
-          currentGroup = {
-            colspan: 1,
-            month,
-            date: column.date,
-          };
+			if (month !== currentMonth) {
+				currentGroup = {
+					colspan: 1,
+					month,
+					date: column.date,
+				};
 
-          groups.push(currentGroup);
-          currentMonth = month;
-        } else {
-          currentGroup.colspan++;
-        }
-      });
+				groups.push(currentGroup);
+				currentMonth = month;
+			} else {
+				currentGroup.colspan++;
+			}
+		});
 
-      return groups;
-    }
-  </script>
+		return groups;
+	}
+</script>
+
 </html>
