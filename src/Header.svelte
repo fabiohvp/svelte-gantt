@@ -4,7 +4,7 @@
   export let cells;
   export let getCoordinates;
   export let getHeader;
-  export let header;
+  export let headers;
   export let slices;
   export let zoom;
 
@@ -20,8 +20,28 @@
     return "";
   }
 
-  function onClick(e) {
-    console.log("xx");
+  function onClickHeader(e, slice) {
+    dispatch("click", {
+      event: e,
+      slice,
+      type: "cell"
+    });
+  }
+
+  function onClickGroup(e, item) {
+    dispatch("click", {
+      event: e,
+      item,
+      type: "group"
+    });
+  }
+
+  function onClickStatic(e, header) {
+    dispatch("click", {
+      event: e,
+      header,
+      type: "static"
+    });
   }
 </script>
 
@@ -34,9 +54,11 @@
 </style>
 
 <tr bind:this={tr}>
-  <th>
-    {#each header as header}
+  <th rowspan={2}>
+    {#each headers as header}
       <div
+        on:click={e => onClickStatic(e, header)}
+        class:fix={true}
         class:column={true}
         class:header={true}
         class:static={true}
@@ -48,7 +70,9 @@
   <th>
     {#each getHeader[zoom](slices) as item (item)}
       <div
-        on:click={e => onClick(e, item)}
+        on:click={e => onClickGroup(e, item)}
+        class:column={true}
+        class:header={true}
         class:item={true}
         startTime={item.startTime}
         endTime={item.endTime}
@@ -60,22 +84,19 @@
   </th>
 </tr>
 <tr>
-  {#each header as header}
-    <th class:column={true} class:header={true} class:static={true} {...header}>
-      {@html header.content}
-    </th>
-  {/each}
   <th colspan={slices.length}>
+    &nbsp;
     <div class="cell">
       {#each slices as slice (slice)}
         <span
-          on:click={e => onClick(e, slice)}
+          on:click={e => onClickHeader(e, slice)}
           class:column={true}
           class:slice={true}
+          class:header={true}
           startTime={slice.startTime}
           endTime={slice.endTime}
-          {...slice}>
-          {@html slice.content || ''}
+          {...slice.header}>
+          {@html slice.header.content || ''}
         </span>
       {/each}
     </div>

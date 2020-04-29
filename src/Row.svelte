@@ -21,16 +21,17 @@
     return items;
   }
 
-  function onChildrenClick(e) {
-    dispatch("click", e.detail);
-  }
-
-  function onClick(e, slice) {
+  function onClick(e, slice, index) {
     dispatch("click", {
       event: e,
       slice,
+      index,
       items: getItems(slice)
     });
+  }
+
+  function onClickChildren(e) {
+    dispatch("click", e.detail);
   }
 </script>
 
@@ -44,8 +45,10 @@
 <tr class:even={index % 2 === 0} class:odd={index % 2 !== 0}>
   {#each row.headers as header (header)}
     <td
+      class:fix={true}
       class:column={true}
       class:header={true}
+      class:row={true}
       on:click={() => (row.expanded = !row.expanded)}
       {...header}>
       <div class="column header">
@@ -59,13 +62,14 @@
       {#each slices as slice (slice)}
         <span
           bind:this={cells[`${index},${slice.startTime}`]}
-          on:click={e => onClick(e, slice)}
+          on:click={e => onClick(e, slice, index)}
           class:column={true}
           class:slice={true}
+          class:row={true}
           startTime={slice.startTime}
           endTime={slice.endTime}
-          {...slice}>
-          {@html slice.content || ''}
+          {...slice.body}>
+          {@html slice.body.content || ''}
         </span>
       {/each}
     </div>
@@ -81,6 +85,6 @@
       bind:row={child}
       {slices}
       {zoom}
-      on:click={e => onChildrenClick(e)} />
+      on:click={e => onClickChildren(e)} />
   {/each}
 {/if}

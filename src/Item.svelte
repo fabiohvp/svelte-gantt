@@ -17,16 +17,17 @@
     return "";
   }
 
-  function onChildrenClick(e) {
-    dispatch("click", e.detail);
-  }
-
-  function onClick(e, item) {
+  function onClick(e, item, index) {
     dispatch("click", {
       event: e,
       item,
+      index,
       slice: slices[getRelativeDate[zoom](item.startTime)]
     });
+  }
+
+  function onClickChildren(e) {
+    dispatch("click", e.detail);
   }
 </script>
 
@@ -41,7 +42,8 @@
 
 {#each row.items as item (item)}
   <div
-    on:click={e => onClick(e, item)}
+    on:click={e => onClick(e, item, index)}
+    class:row={true}
     class:item={true}
     startTime={item.startTime}
     endTime={item.endTime}
@@ -60,6 +62,6 @@
       row={child}
       {slices}
       {zoom}
-      on:click={e => onChildrenClick(e)} />
+      on:click={e => onClickChildren(e)} />
   {/each}
 {/if}

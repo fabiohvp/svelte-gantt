@@ -17,13 +17,13 @@
 			padding: 0 0;
 		}
 
-		.slice {
-			border: 1px solid black;
+		.row.slice,
+		.row.header {
+			border: 1px solid rgba(237, 241, 242, 0.75);
 		}
 
-		.item {
-			background-color: blue;
-			/* margin-top: 2px; */
+		.row.item {
+			background-color: rgba(0, 119, 192, 0.5);
 		}
 
 		.teste3 {
@@ -33,22 +33,6 @@
 		.weekend {
 			background-color: brown;
 		}
-
-		/* tr {
-        display: flex;
-        width: 1000px;
-      }
-
-      th.column.static > .cell,
-      .column.slice {
-        flex: 1;
-        overflow: hidden;
-      }
-
-      th.column.static,
-      td.column.header {
-        width: 300px;
-      } */
 	</style>
 </head>
 
@@ -156,12 +140,13 @@
 			formatSlice,
 			startTime,
 			endTime,
-			header: getHeader(),
+			headers: getHeaders(),
 			rows,
 			zoom: "hour",
 		},
 	});
 
+	gantt.$on("click.header", console.log);
 	gantt.$on("click.item", console.log);
 	gantt.$on("click.row", console.log);
 
@@ -181,29 +166,63 @@
 	// 	gantt.$set({ rows });
 	// }, 2000);
 
-	function formatHeader(startSlice, endSlice) {
-		return {
-			content: `${startSlice.startDate.getMonth()} ${startSlice.startDate.getFullYear()}`,
-			title: new Date(startSlice.startTime),
-			...startSlice,
-			// class: isWeekend ? "weekend" : ""
+	function formatHeader(item, zoom) {
+		const formatters = {
+			year: () => {
+				return {
+					...item,
+					content: `${item.startDate.getFullYear()}`,
+					title: item.startDate,
+				}
+			},
+			month: () => {
+				return {
+					...item,
+					content: `${item.startDate.getFullYear()}`,
+					title: item.startDate,
+				}
+			},
+			day: () => {
+				return {
+					...item,
+					content: `${item.startDate.getMonth()} ${item.startDate.getFullYear()}`,
+					title: item.startDate,
+					// class: isWeekend ? "weekend" : ""
+				}
+			},
+			hour: () => {
+				return {
+					...item,
+					content: `${item.startDate.getDate()} ${item.startDate.getMonth()} ${item.startDate.getFullYear()}`,
+					title: item.startDate,
+					// class: isWeekend ? "weekend" : ""
+				}
+			}
 		};
+
+		return formatters[zoom]();
 	}
 
-	function formatSlice(slice) {
+	function formatSlice(slice, zoom) {
 		// const day = new Date(slice.startTime).getDay();
 		// const isWeekend = (day === 6) || (day === 0);
-
 		return {
-			content: "&nbsp;", //slice.startTime + "/" + slice.endTime,
-			title: new Date(slice.startTime),
 			...slice,
+			header: {
+				...slice.header,
+				content: "&nbsp;", //slice.startTime + "/" + slice.endTime,
+				title: slice.startDate
+			},
+			body: {
+				...slice.body,
+				title: slice.startDate,
+			},
 			// class: isWeekend ? "weekend" : ""
 		};
 	}
 
 	import utils from "./src/utils.js";
-	function getHeader() {
+	function getHeaders() {
 		const monthNames = [
 			"January",
 			"February",

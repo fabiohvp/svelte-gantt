@@ -9,12 +9,6 @@
   import Row from "./Row.svelte";
   import Item from "./Item.svelte";
 
-  //   function groupBy(array, key) {
-  //     return array.reduce(function(map, item) {
-  //       (map[item[key]] = map[item[key]] || []).push(item);
-  //       return map;
-  //     }, {});
-  //   }
   function groupBy(array, fnKey) {
     return array.reduce(function(map, item) {
       const key = fnKey(item);
@@ -24,8 +18,8 @@
   }
 
   export let endTime;
-  export let formatHeader = (s, e) => s;
-  export let formatSlice = s => s;
+  export let formatHeader = (s, e, z) => s;
+  export let formatSlice = (s, z) => s;
   export let getRelativeDate = {
     year: date => {
       let newDate = new Date(date);
@@ -61,7 +55,7 @@
           endDate: last.startDate,
           endTime: last.startTime
         };
-        items.push(formatHeader(item));
+        items.push(formatHeader(item, zoom));
       }
       return items;
     },
@@ -78,7 +72,7 @@
           endDate: last.startDate,
           endTime: last.startTime
         };
-        items.push(formatHeader(item));
+        items.push(formatHeader(item, zoom));
       }
       return items;
     },
@@ -95,7 +89,7 @@
           endDate: last.startDate,
           endTime: last.startTime
         };
-        items.push(formatHeader(item));
+        items.push(formatHeader(item, zoom));
       }
       return items;
     },
@@ -112,7 +106,7 @@
           endDate: last.startDate,
           endTime: last.startTime
         };
-        items.push(formatHeader(item));
+        items.push(formatHeader(item, zoom));
       }
       return items;
     }
@@ -125,17 +119,11 @@
 
       while (date <= end) {
         const current = utils.addYears(date, 1);
-        const _startTime = date.getTime();
         const _endDate = new Date(current.getFullYear(), 12, 31);
         _endDate.setHours(23, 59, 59, 999);
 
-        const _slice = {
-          startDate: date,
-          startTime: _startTime,
-          endDate: _endDate,
-          endTime: _endDate.getTime()
-        };
-        _slices.push(formatSlice(_slice));
+        const _slice = getSlice(date, _endDate);
+        _slices.push(formatSlice(_slice, zoom));
         date = current;
       }
       return _slices;
@@ -151,17 +139,11 @@
 
       while (date <= end) {
         const current = utils.addMonths(date, 1);
-        const _startTime = date.getTime();
         const _endDate = utils.getLastDayOfMonth(date);
         _endDate.setHours(23, 59, 59, 999);
 
-        const _slice = {
-          startDate: date,
-          startTime: _startTime,
-          endDate: _endDate,
-          endTime: _endDate.getTime()
-        };
-        _slices.push(formatSlice(_slice));
+        const _slice = getSlice(date, _endDate);
+        _slices.push(formatSlice(_slice, zoom));
         date = current;
       }
       return _slices;
@@ -179,13 +161,8 @@
         const _endDate = new Date(_startTime);
         _endDate.setHours(23, 59, 59, 999);
 
-        const _slice = {
-          startDate: date,
-          startTime: _startTime,
-          endDate: _endDate,
-          endTime: _endDate.getTime()
-        };
-        _slices.push(formatSlice(_slice));
+        const _slice = getSlice(date, _endDate);
+        _slices.push(formatSlice(_slice, zoom));
         date = current;
       }
       return _slices;
@@ -203,19 +180,14 @@
         const _endDate = new Date(_startTime);
         _endDate.setMinutes(59, 59, 999);
 
-        const _slice = {
-          startDate: date,
-          startTime: _startTime,
-          endDate: _endDate,
-          endTime: _endDate.getTime()
-        };
-        _slices.push(formatSlice(_slice));
+        const _slice = getSlice(date, _endDate);
+        _slices.push(formatSlice(_slice, zoom));
         date = current;
       }
       return _slices;
     }
   };
-  export let header;
+  export let headers;
   export let rows;
   export let slices;
   export let startTime;
@@ -228,11 +200,44 @@
   $: slices = getSlices[zoom](new Date(startTime), new Date(endTime));
   $: (cells = {}), zoom;
 
-  function itemOnClick(e) {
+  function getSlice(startDate, endDate) {
+    return {
+      startDate: startDate,
+      startTime: startDate.getTime(),
+      endDate: endDate,
+      endTime: endDate.getTime(),
+      body: {},
+      header: {}
+    };
+  }
+
+  function getColumnHeader(el) {
+    const th = document.createElement(el);
+    th.className = "cell";
+    return th;
+  }
+
+  function getColumnCell() {
+    const th = document.createElement("th");
+    th.className = "column header";
+    return th;
+  }
+
+  function getDiv(css) {
+    const div = document.createElement("div");
+    div.className = css;
+    return div;
+  }
+
+  function onClickHeader(e) {
+    dispatch("click.header", e.detail);
+  }
+
+  function onClickItem(e) {
     dispatch("click.item", e.detail);
   }
 
-  function rowOnClick(e) {
+  function onClickRow(e) {
     dispatch("click.row", e.detail);
   }
 
@@ -260,35 +265,32 @@
 
     return undefined;
   }
-
-  function getColumnHeader(el) {
-    const th = document.createElement(el);
-    th.className = "cell";
-    return th;
-  }
-
-  function getColumnCell() {
-    const th = document.createElement("th");
-    th.className = "column header";
-    return th;
-  }
-
-  function getDiv(css) {
-    const div = document.createElement("div");
-    div.className = css;
-    return div;
-  }
 </script>
 
 <style>
   .svelte-gantt {
     position: relative;
+    width: 100%;
+    /* overflow: auto; */
   }
 
   table {
-    width: 100%;
+    /* margin-left: 8em; */
     color: #707070;
   }
+  /* 
+  .svelte-gantt :global(th),
+  .svelte-gantt :global(td) {
+    white-space: nowrap;
+  }
+
+  .svelte-gantt :global(th.fix),
+  .svelte-gantt :global(td.fix) {
+    position: absolute;
+    width: 8em;
+    margin-left: -8em;
+    background: #ccc;
+  } */
 
   thead {
     background-color: #f9fafb;
@@ -300,6 +302,8 @@
 
   .svelte-gantt :global(.slice) {
     flex: 1;
+    min-width: 20px;
+    min-height: 26px;
   }
 
   .svelte-gantt :global(.cell) {
@@ -308,9 +312,16 @@
 </style>
 
 <div bind:this={container} class="svelte-gantt">
-  <table>
+  <table {zoom} {startTime} {endTime}>
     <thead>
-      <Header {cells} {getCoordinates} {getHeader} {header} {slices} {zoom} />
+      <Header
+        {cells}
+        {getCoordinates}
+        {getHeader}
+        {headers}
+        {slices}
+        {zoom}
+        on:click={onClickHeader} />
     </thead>
     <tbody>
       {#each rows as row, index (row)}
@@ -321,7 +332,7 @@
           bind:row
           {slices}
           {zoom}
-          on:click={rowOnClick} />
+          on:click={onClickRow} />
       {/each}
     </tbody>
   </table>
@@ -334,6 +345,6 @@
       {row}
       {slices}
       {zoom}
-      on:click={itemOnClick} />
+      on:click={onClickItem} />
   {/each}
 </div>
