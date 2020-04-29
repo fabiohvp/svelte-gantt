@@ -71,16 +71,15 @@
 	}
 
 	const padding = 2;
-	const today = new Date(2020, 3, 1, 0, 0, 0, 0);
-	today.setTime(today.getTime() - 3 * 60 * 60 * 1000); //com timezone -3
+	const today = new Date(2020, 3, 2, 0, 0, 0, 0);
 
-	let startDate = addDays(today, -padding);
-	startDate.setHours(0, 0, 0, 0);
-	startDate = startDate.getTime();
+	let startTime = addDays(today, -padding);
+	startTime.setHours(0, 0, 0, 0);
+	startTime = startTime.getTime();
 
-	let endDate = addDays(today, padding);
-	endDate.setHours(0, 0, 0, 0);
-	endDate = endDate.getTime();
+	let endTime = addDays(today, padding);
+	endTime.setHours(0, 0, 0, 0);
+	endTime = endTime.getTime();
 
 	const rows = [
 		{
@@ -95,8 +94,8 @@
 					content: "teste",
 					title: "teste",
 					class: "teste",
-					startDate: addDays(today, -1).getTime(),
-					endDate: addDays(today, 1).getTime(),
+					startTime: addDays(today, -1).getTime(),
+					endTime: addDays(today, 1).getTime(),
 				},
 			],
 			expanded: false,
@@ -111,8 +110,8 @@
 					items: [
 						{
 							details: "teste1",
-							startDate: addDays(today, -1).getTime(),
-							endDate: addDays(today, -1).getTime(),
+							startTime: addDays(today, -1).getTime(),
+							endTime: addDays(today, -1).getTime(),
 						},
 					],
 				},
@@ -126,8 +125,8 @@
 					items: [
 						{
 							details: "teste2",
-							startDate: addDays(today, 0).getTime(),
-							endDate: addHours(today, 12).getTime(),
+							startTime: addDays(today, 0).getTime(),
+							endTime: addHours(today, 12).getTime(),
 						},
 					],
 				},
@@ -141,8 +140,8 @@
 					items: [
 						{
 							details: "teste3",
-							startDate: addDays(today, 1).getTime(),
-							endDate: addDays(today, 1).getTime(),
+							startTime: addDays(today, 1).getTime(),
+							endTime: addDays(today, 1).getTime(),
 						},
 					],
 				},
@@ -153,12 +152,13 @@
 	const gantt = new Gantt({
 		target: document.getElementById("teste"),
 		props: {
+			formatHeader,
 			formatSlice,
-			startDate,
-			endDate,
+			startTime,
+			endTime,
 			header: getHeader(),
 			rows,
-			zoom: "day",
+			zoom: "hour",
 		},
 	});
 
@@ -174,20 +174,29 @@
 	// 			content: "teste3",
 	// 			title: "teste3",
 	// 			class: "teste3",
-	// 			startDate: addDays(today, 1).getTime(),
-	// 			endDate: addDays(today, 2).getTime(),
+	// 			startTime: addDays(today, 1).getTime(),
+	// 			endTime: addDays(today, 2).getTime(),
 	// 		},
 	// 	);
 	// 	gantt.$set({ rows });
 	// }, 2000);
 
+	function formatHeader(startSlice, endSlice) {
+		return {
+			content: `${startSlice.startDate.getMonth()} ${startSlice.startDate.getFullYear()}`,
+			title: new Date(startSlice.startTime),
+			...startSlice,
+			// class: isWeekend ? "weekend" : ""
+		};
+	}
+
 	function formatSlice(slice) {
-		// const day = new Date(slice.startDate).getDay();
+		// const day = new Date(slice.startTime).getDay();
 		// const isWeekend = (day === 6) || (day === 0);
 
 		return {
-			content: "&nbsp;", //slice.startDate + "/" + slice.endDate,
-			title: new Date(slice.startDate),
+			content: "&nbsp;", //slice.startTime + "/" + slice.endTime,
+			title: new Date(slice.startTime),
 			...slice,
 			// class: isWeekend ? "weekend" : ""
 		};

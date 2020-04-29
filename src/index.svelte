@@ -9,8 +9,23 @@
   import Row from "./Row.svelte";
   import Item from "./Item.svelte";
 
-  export let endDate;
-  export let formatSlice = (c, s) => slice;
+  //   function groupBy(array, key) {
+  //     return array.reduce(function(map, item) {
+  //       (map[item[key]] = map[item[key]] || []).push(item);
+  //       return map;
+  //     }, {});
+  //   }
+  function groupBy(array, fnKey) {
+    return array.reduce(function(map, item) {
+      const key = fnKey(item);
+      (map[key] = map[key] || []).push(item);
+      return map;
+    }, {});
+  }
+
+  export let endTime;
+  export let formatHeader = (s, e) => s;
+  export let formatSlice = s => s;
   export let getRelativeDate = {
     year: date => {
       let newDate = new Date(date);
@@ -33,166 +48,166 @@
     }
   };
   export let getHeader = {
-    year: (row, slices) => {
-      let lastDate = utils.addYears(slices[0].startDate, -1);
-      slices.forEach(slice => {
-        const currentDate = new Date(slice.startDate);
-        if (lastDate.getFullYear() !== currentDate.getFullYear()) {
-          const th = getColumnHeader("th");
-          row.appendChild(th);
-          th.innerHTML = `<div class="slice header-year">${currentDate.getFullYear()}</div>`;
-          row.appendChild(th);
-        }
-      });
+    year: slices => {
+      const groups = groupBy(slices, slice => slice.startDate.getFullYear());
+      const items = [];
+
+      for (let i in groups) {
+        const first = groups[i][0];
+        const last = groups[i][groups[i].length - 1];
+        const item = {
+          startDate: first.startDate,
+          startTime: first.startTime,
+          endDate: last.startDate,
+          endTime: last.startTime
+        };
+        items.push(formatHeader(item));
+      }
+      return items;
     },
-    month: (row, slices) => {
-      let lastDate = utils.addYears(slices[0].startDate, -1);
-      let th = getColumnHeader("th");
-      let div = getDiv();
-      slices.forEach(slice => {
-        const currentDate = new Date(slice.startDate);
-        if (lastDate.getFullYear() !== currentDate.getFullYear()) {
-          div = getDiv();
-          th = getColumnHeader("th");
-          th.setAttribute("colspan", 11 - currentDate.getMonth());
-          th.innerHTML = `<div class="header-months">${currentDate.getFullYear()}</div>`;
-          th.appendChild(div);
-          row.appendChild(th);
-        }
-        div.innerHTML += `<span class="slice header-month">${currentDate.getMonth() +
-          1}</span>`;
-        lastDate = currentDate;
-      });
+    month: slices => {
+      const groups = groupBy(slices, slice => slice.startDate.getFullYear());
+      const items = [];
+
+      for (let i in groups) {
+        const first = groups[i][0];
+        const last = groups[i][groups[i].length - 1];
+        const item = {
+          startDate: first.startDate,
+          startTime: first.startTime,
+          endDate: last.startDate,
+          endTime: last.startTime
+        };
+        items.push(formatHeader(item));
+      }
+      return items;
     },
     day: slices => {
-      let date = new Date(slices[0].startDate - 1);
-      let groups = [];
-      let item = {
-        startDate: slices[0].startDate
-      };
-      let currentDate;
+      const groups = groupBy(slices, slice => slice.startDate.getMonth());
+      const items = [];
 
-      const addItem = currentDate => {
-        item.endDate = currentDate.getTime();
-        item.content = `${currentDate.getMonth() +
-          1} ${currentDate.getFullYear()}`;
-        groups.push(item);
-      };
-
-      slices.forEach(slice => {
-        currentDate = new Date(slice.startDate);
-
-        if (date.getMonth() !== currentDate.getMonth()) {
-          addItem(currentDate);
-
-          item = {
-            startDate: currentDate.getTime()
-          };
-        }
-
-        date = currentDate;
-      });
-
-      addItem(currentDate);
-      return groups;
+      for (let i in groups) {
+        const first = groups[i][0];
+        const last = groups[i][groups[i].length - 1];
+        const item = {
+          startDate: first.startDate,
+          startTime: first.startTime,
+          endDate: last.startDate,
+          endTime: last.startTime
+        };
+        items.push(formatHeader(item));
+      }
+      return items;
     },
-    hour: (row, slices) => {
-      let lastDate = utils.addDays(slices[0].startDate, -1);
-      let th = getColumnHeader("th");
-      let div = getDiv();
-      slices.forEach(slice => {
-        const currentDate = new Date(slice.startDate);
-        if (lastDate.getDate() !== currentDate.getDate()) {
-          div = getDiv();
-          th = getColumnHeader("th");
-          th.setAttribute("colspan", 24 - currentDate.getHours());
-          th.innerHTML = `<div class="header-hours">${currentDate.getDate() +
-            1} ${currentDate.getMonth() +
-            1} ${currentDate.getFullYear()}</div>`;
-          th.appendChild(div);
-          row.appendChild(th);
-        }
-        div.innerHTML += `<span class="slice header-hour">${currentDate.getHours() +
-          1}</span>`;
-        lastDate = currentDate;
-      });
+    hour: slices => {
+      const groups = groupBy(slices, slice => slice.startDate.getDate());
+      const items = [];
+
+      for (let i in groups) {
+        const first = groups[i][0];
+        const last = groups[i][groups[i].length - 1];
+        const item = {
+          startDate: first.startDate,
+          startTime: first.startTime,
+          endDate: last.startDate,
+          endTime: last.startTime
+        };
+        items.push(formatHeader(item));
+      }
+      return items;
     }
   };
   export let getSlices = {
-    year: (startDate, endDate) => {
+    year: (startTime, endTime) => {
       const _slices = [];
-      let date = new Date(startDate.getFullYear(), 0, 1);
-      const end = new Date(endDate.getFullYear(), 0, 1);
+      let date = new Date(startTime.getFullYear(), 0, 1);
+      const end = new Date(endTime.getFullYear(), 11, 31);
 
       while (date <= end) {
         const current = utils.addYears(date, 1);
-        const _slice = {
-          startDate: date.getTime(),
-          endDate: new Date(current.getFullYear(), 12, 31).getTime()
-        };
-        _slices.push(formatSlice(_slice));
-        date = current;
-      }
-      return _slices;
-    },
-    month: (startDate, endDate) => {
-      const _slices = [];
-      let date = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
-      const end = new Date(endDate.getFullYear(), endDate.getMonth(), 1);
-
-      while (date <= end) {
-        const current = utils.addMonths(date, 1);
-        const _slice = {
-          startDate: date.getTime(),
-          endDate: new Date(
-            current.getFullYear(),
-            current.getMonth(),
-            0
-          ).getTime()
-        };
-        _slices.push(formatSlice(_slice));
-        date = current;
-      }
-      return _slices;
-    },
-    day: (startDate, endDate) => {
-      const _slices = [];
-      let date = new Date(startDate);
-      date.setHours(0, 0, 0, 0);
-      const end = new Date(endDate);
-      end.setHours(0, 0, 0, 0);
-
-      while (date <= end) {
-        const current = utils.addDays(date, 1);
-        const startTime = date.getTime();
-        const _endDate = new Date(startTime);
+        const _startTime = date.getTime();
+        const _endDate = new Date(current.getFullYear(), 12, 31);
         _endDate.setHours(23, 59, 59, 999);
 
         const _slice = {
-          startDate: startTime,
-          endDate: _endDate.getTime()
+          startDate: date,
+          startTime: _startTime,
+          endDate: _endDate,
+          endTime: _endDate.getTime()
         };
         _slices.push(formatSlice(_slice));
         date = current;
       }
       return _slices;
     },
-    hour: (startDate, endDate) => {
+    month: (startTime, endTime) => {
       const _slices = [];
-      let date = new Date(startDate);
+      let date = new Date(startTime);
+      date.setDate(1);
+      date.setHours(0, 0, 0, 0);
+      const end = new Date(endTime);
+      end.setDate(0);
+      end.setHours(23, 59, 59, 999);
+
+      while (date <= end) {
+        const current = utils.addMonths(date, 1);
+        const _startTime = date.getTime();
+        const _endDate = utils.getLastDayOfMonth(date);
+        _endDate.setHours(23, 59, 59, 999);
+
+        const _slice = {
+          startDate: date,
+          startTime: _startTime,
+          endDate: _endDate,
+          endTime: _endDate.getTime()
+        };
+        _slices.push(formatSlice(_slice));
+        date = current;
+      }
+      return _slices;
+    },
+    day: (startTime, endTime) => {
+      const _slices = [];
+      let date = new Date(startTime);
+      date.setHours(0, 0, 0, 0);
+      const end = new Date(endTime);
+      end.setHours(23, 59, 59, 999);
+
+      while (date <= end) {
+        const current = utils.addDays(date, 1);
+        const _startTime = date.getTime();
+        const _endDate = new Date(_startTime);
+        _endDate.setHours(23, 59, 59, 999);
+
+        const _slice = {
+          startDate: date,
+          startTime: _startTime,
+          endDate: _endDate,
+          endTime: _endDate.getTime()
+        };
+        _slices.push(formatSlice(_slice));
+        date = current;
+      }
+      return _slices;
+    },
+    hour: (startTime, endTime) => {
+      const _slices = [];
+      let date = new Date(startTime);
       date.setMinutes(0, 0, 0);
-      const end = new Date(endDate);
-      end.setMinutes(0, 0, 0);
+      const end = new Date(endTime);
+      end.setMinutes(59, 59, 999);
 
       while (date <= end) {
         const current = utils.addHours(date, 1);
-        const startTime = date.getTime();
-        const _endDate = new Date(startTime);
+        const _startTime = date.getTime();
+        const _endDate = new Date(_startTime);
         _endDate.setMinutes(59, 59, 999);
 
         const _slice = {
-          startDate: startTime,
-          endDate: _endDate.getTime()
+          startDate: date,
+          startTime: _startTime,
+          endDate: _endDate,
+          endTime: _endDate.getTime()
         };
         _slices.push(formatSlice(_slice));
         date = current;
@@ -203,15 +218,14 @@
   export let header;
   export let rows;
   export let slices;
-  export let startDate;
+  export let startTime;
   export let zoom;
 
   const dispatch = createEventDispatcher();
   let container;
   let cells;
 
-  $: timezone = new Date(startDate).getTimezoneOffset() * 60 * 1000; //milliseconds
-  $: slices = getSlices[zoom](new Date(startDate), new Date(endDate));
+  $: slices = getSlices[zoom](new Date(startTime), new Date(endTime));
   $: (cells = {}), zoom;
 
   function itemOnClick(e) {
@@ -222,12 +236,12 @@
     dispatch("click.row", e.detail);
   }
 
-  export function getCoordinates(index, startDate, endDate) {
-    const startDateWithTimezone = getRelativeDate[zoom](startDate);
-    const endDateWithTimezone = getRelativeDate[zoom](endDate);
+  export function getCoordinates(index, startTime, endTime) {
+    const startTimeRelative = getRelativeDate[zoom](startTime);
+    const endTimeRelative = getRelativeDate[zoom](endTime);
 
-    const startCell = cells[`${index},${startDateWithTimezone}`];
-    const endCell = cells[`${index},${endDateWithTimezone}`];
+    const startCell = cells[`${index},${startTimeRelative}`];
+    const endCell = cells[`${index},${endTimeRelative}`];
 
     if (startCell && endCell) {
       const startCoords = utils.offset(startCell);
@@ -273,7 +287,6 @@
 
   table {
     width: 100%;
-    border: 1px solid black;
     color: #707070;
   }
 
@@ -292,30 +305,6 @@
   .svelte-gantt :global(.cell) {
     display: flex;
   }
-
-  :global(.container-m) {
-    flex: 1;
-    display: flex;
-  }
-
-  :global(.container-x) {
-    flex: 1;
-  }
-
-  :global(.grupo) {
-    flex-grow: 1;
-    display: flex;
-  }
-
-  :global(.titulo) {
-    display: flex;
-  }
-
-  :global(.item) {
-    flex: 1;
-    border: 1px solid black;
-    width: 0;
-  }
 </style>
 
 <div bind:this={container} class="svelte-gantt">
@@ -331,23 +320,20 @@
           {getRelativeDate}
           bind:row
           {slices}
-          {timezone}
           {zoom}
           on:click={rowOnClick} />
       {/each}
     </tbody>
   </table>
 
-  <!-- {#each rows as row, index (row)}
+  {#each rows as row, index (row)}
     <Item
-      {container}
       {index}
       {getCoordinates}
       {getRelativeDate}
       {row}
       {slices}
-      {timezone}
       {zoom}
       on:click={itemOnClick} />
-  {/each} -->
+  {/each}
 </div>

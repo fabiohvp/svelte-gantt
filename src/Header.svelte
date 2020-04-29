@@ -12,7 +12,7 @@
   let tr;
 
   function getStyle(item, cells) {
-    const coords = getCoordinates(0, item.startDate, item.endDate);
+    const coords = getCoordinates(0, item.startTime, item.endTime);
     if (coords) {
       const trCoords = utils.offset(tr);
       return `display:block;top:${trCoords.top}px;left:${coords.left}px;height:${trCoords.height}px;width:${coords.width}px;`;
@@ -29,6 +29,7 @@
   .item {
     position: absolute;
     height: 1.5em;
+    overflow: hidden;
   }
 </style>
 
@@ -49,8 +50,8 @@
       <div
         on:click={e => onClick(e, item)}
         class:item={true}
-        startDate={item.startDate}
-        endDate={item.endDate}
+        startTime={item.startTime}
+        endTime={item.endTime}
         style={getStyle(item, cells)}
         {...item}>
         {@html item.content || ''}
@@ -71,8 +72,8 @@
           on:click={e => onClick(e, slice)}
           class:column={true}
           class:slice={true}
-          startDate={slice.startDate}
-          endDate={slice.endDate}
+          startTime={slice.startTime}
+          endTime={slice.endTime}
           {...slice}>
           {@html slice.content || ''}
         </span>

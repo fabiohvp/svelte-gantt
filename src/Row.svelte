@@ -5,7 +5,6 @@
   export let getRelativeDate;
   export let row;
   export let slices;
-  export let timezone;
   export let zoom;
 
   const dispatch = createEventDispatcher();
@@ -13,9 +12,9 @@
   function getItems(slice) {
     const items = [];
     row.items.forEach(item => {
-      const startDate = getRelativeDate[zoom](item.startDate);
+      const startTime = getRelativeDate[zoom](item.startTime);
 
-      if (slice.startDate === startDate) {
+      if (slice.startTime === startTime) {
         items.push(item);
       }
     });
@@ -59,12 +58,12 @@
     <div class="cell">
       {#each slices as slice (slice)}
         <span
-          bind:this={cells[`${index},${slice.startDate}`]}
+          bind:this={cells[`${index},${slice.startTime}`]}
           on:click={e => onClick(e, slice)}
           class:column={true}
           class:slice={true}
-          startDate={slice.startDate}
-          endDate={slice.endDate}
+          startTime={slice.startTime}
+          endTime={slice.endTime}
           {...slice}>
           {@html slice.content || ''}
         </span>
@@ -81,7 +80,6 @@
       {getRelativeDate}
       bind:row={child}
       {slices}
-      {timezone}
       {zoom}
       on:click={e => onChildrenClick(e)} />
   {/each}
