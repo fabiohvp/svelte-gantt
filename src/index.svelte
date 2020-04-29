@@ -1,7 +1,3 @@
-<script context="module">
-  import "./tailwind.css";
-</script>
-
 <script>
   import { createEventDispatcher } from "svelte";
   import utils from "./utils.js";
@@ -196,9 +192,20 @@
   const dispatch = createEventDispatcher();
   let container;
   let cells;
+  let resizeCount = 0;
 
-  $: slices = getSlices[zoom](new Date(startTime), new Date(endTime));
+  //   $: (slices = getSlices[zoom](new Date(startTime), new Date(endTime))),
+  //     rows,
+  //     resizeCount;
+  $: updateSlices(slices, resizeCount, zoom);
   $: (cells = {}), zoom;
+
+  function updateSlices(_slices, resizeCount, zoom) {
+    slices = getSlices[zoom](new Date(startTime), new Date(endTime));
+    setTimeout(() => {
+      rows = rows;
+    }, 1);
+  }
 
   function getSlice(startDate, endDate) {
     return {
@@ -265,86 +272,53 @@
 
     return undefined;
   }
+
+  function onResize(e) {
+    resizeCount++;
+  }
 </script>
 
-<style>
-  .svelte-gantt {
-    position: relative;
-    width: 100%;
-    /* overflow: auto; */
-  }
+<svelte:window on:resize={onResize} />
 
-  table {
-    /* margin-left: 8em; */
-    color: #707070;
-  }
-  /* 
-  .svelte-gantt :global(th),
-  .svelte-gantt :global(td) {
-    white-space: nowrap;
-  }
-
-  .svelte-gantt :global(th.fix),
-  .svelte-gantt :global(td.fix) {
-    position: absolute;
-    width: 8em;
-    margin-left: -8em;
-    background: #ccc;
-  } */
-
-  thead {
-    background-color: #f9fafb;
-  }
-
-  .svelte-gantt thead :global(th) {
-    padding: 0 0;
-  }
-
-  .svelte-gantt :global(.slice) {
-    flex: 1;
-    min-width: 20px;
-    min-height: 26px;
-  }
-
-  .svelte-gantt :global(.cell) {
-    display: flex;
-  }
-</style>
-
-<div bind:this={container} class="svelte-gantt">
-  <table {zoom} {startTime} {endTime}>
-    <thead>
-      <Header
-        {cells}
-        {getCoordinates}
-        {getHeader}
-        {headers}
-        {slices}
-        {zoom}
-        on:click={onClickHeader} />
-    </thead>
-    <tbody>
-      {#each rows as row, index (row)}
-        <Row
-          {index}
-          bind:cells
-          {getRelativeDate}
-          bind:row
+<!-- <script context="module">
+  import "./tailwind.css";
+</script> -->
+<div class="svelte-gantt">
+  <div bind:this={container} class="container">
+    <table {zoom} {startTime} {endTime}>
+      <thead>
+        <Header
+          {cells}
+          {getCoordinates}
+          {getHeader}
+          {headers}
           {slices}
           {zoom}
-          on:click={onClickRow} />
-      {/each}
-    </tbody>
-  </table>
+          on:click={onClickHeader} />
+      </thead>
+      <tbody>
+        {#each rows as row, index (row)}
+          <Row
+            {index}
+            bind:cells
+            {getRelativeDate}
+            bind:row
+            {slices}
+            {zoom}
+            on:click={onClickRow} />
+        {/each}
+      </tbody>
+    </table>
 
-  {#each rows as row, index (row)}
-    <Item
-      {index}
-      {getCoordinates}
-      {getRelativeDate}
-      {row}
-      {slices}
-      {zoom}
-      on:click={onClickItem} />
-  {/each}
+    {#each rows as row, index (row)}
+      <Item
+        {index}
+        {getCoordinates}
+        {getRelativeDate}
+        {row}
+        {slices}
+        {zoom}
+        on:click={onClickItem} />
+    {/each}
+  </div>
 </div>

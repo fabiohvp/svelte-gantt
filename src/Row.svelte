@@ -35,37 +35,26 @@
   }
 </script>
 
-<style>
-  div.column.header {
-    height: 1.5em;
-    overflow: hidden;
-  }
-</style>
-
 <tr class:even={index % 2 === 0} class:odd={index % 2 !== 0}>
   {#each row.headers as header (header)}
     <td
       class:fix={true}
-      class:column={true}
-      class:header={true}
-      class:row={true}
       on:click={() => (row.expanded = !row.expanded)}
       {...header}>
-      <div class="column header">
+      <div class:content={true} class:header={true}>
         {@html header.content || ''}
       </div>
     </td>
   {/each}
 
-  <td colspan={slices.length}>
+  <td colspan={slices.length} class:generated={true}>
     <div class="cell">
       {#each slices as slice (slice)}
         <span
           bind:this={cells[`${index},${slice.startTime}`]}
           on:click={e => onClick(e, slice, index)}
-          class:column={true}
           class:slice={true}
-          class:row={true}
+          class:content={true}
           startTime={slice.startTime}
           endTime={slice.endTime}
           {...slice.body}>

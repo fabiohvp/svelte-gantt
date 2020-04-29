@@ -15,7 +15,7 @@
     const coords = getCoordinates(0, item.startTime, item.endTime);
     if (coords) {
       const trCoords = utils.offset(tr);
-      return `display:block;top:${trCoords.top}px;left:${coords.left}px;height:${trCoords.height}px;width:${coords.width}px;`;
+      return `top:${trCoords.top}px;left:${coords.left}px;width:${coords.width}px;`;
     }
     return "";
   }
@@ -45,58 +45,56 @@
   }
 </script>
 
-<style>
-  .item {
-    position: absolute;
-    height: 1.5em;
-    overflow: hidden;
-  }
-</style>
-
 <tr bind:this={tr}>
-  <th rowspan={2}>
+  <th class:fix={true} class:group={true}>
     {#each headers as header}
-      <div
-        on:click={e => onClickStatic(e, header)}
-        class:fix={true}
-        class:column={true}
-        class:header={true}
-        class:static={true}
-        {...header}>
-        {@html header.content}
+      <div on:click={e => onClickStatic(e, header)} {...header}>
+        <span class="content">
+          {@html header.content}
+        </span>
       </div>
     {/each}
   </th>
-  <th>
+  <th class:generated={true} class:group={true}>
+    &nbsp;
     {#each getHeader[zoom](slices) as item (item)}
       <div
         on:click={e => onClickGroup(e, item)}
-        class:column={true}
         class:header={true}
-        class:item={true}
+        class:asbolute={true}
         startTime={item.startTime}
         endTime={item.endTime}
         style={getStyle(item, cells)}
         {...item}>
-        {@html item.content || ''}
+        <span class="content">
+          {@html item.content || ''}
+        </span>
       </div>
     {/each}
   </th>
 </tr>
 <tr>
-  <th colspan={slices.length}>
+  <th class:fix={true} class:title={true}>
     &nbsp;
+    {#each headers as header}
+      <div on:click={e => onClickStatic(e, header)}>
+        <span class="content" />
+      </div>
+    {/each}
+  </th>
+  <th colspan={slices.length} class:generated={true} class:title={true}>
     <div class="cell">
       {#each slices as slice (slice)}
         <span
           on:click={e => onClickHeader(e, slice)}
-          class:column={true}
           class:slice={true}
           class:header={true}
           startTime={slice.startTime}
           endTime={slice.endTime}
           {...slice.header}>
-          {@html slice.header.content || ''}
+          <span class="content">
+            {@html slice.header.content || ''}
+          </span>
         </span>
       {/each}
     </div>

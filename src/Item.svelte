@@ -12,7 +12,7 @@
   function getStyle(item) {
     const coords = getCoordinates(index, item.startTime, item.endTime);
     if (coords) {
-      return `display:block;top:${coords.top}px;left:${coords.left}px;height:${coords.height}px;width:${coords.width}px;`;
+      return `display:flex;top:${coords.top}px;left:${coords.left}px;width:${coords.width}px;height:${coords.height}px;`;
     }
     return "";
   }
@@ -31,25 +31,19 @@
   }
 </script>
 
-<style>
-  .item {
-    position: absolute;
-    height: 1.5em;
-    display: none;
-    opacity: 0.6;
-  }
-</style>
-
 {#each row.items as item (item)}
   <div
     on:click={e => onClick(e, item, index)}
-    class:row={true}
+    class:asbolute={true}
+    class:generated={true}
     class:item={true}
     startTime={item.startTime}
     endTime={item.endTime}
     style={getStyle(item)}
     {...item}>
-    {@html item.content || ''}
+    <span class="content">
+      {@html item.content || ''}
+    </span>
   </div>
 {/each}
 
