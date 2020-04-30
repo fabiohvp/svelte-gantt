@@ -1,6 +1,8 @@
 <script>
   import { createEventDispatcher, onMount } from "svelte";
+  import Slice from "./Slice.svelte";
   export let index;
+  export let index2 = 0;
   export let cells;
   export let getRelativeDate;
   export let row;
@@ -9,58 +11,42 @@
 
   const dispatch = createEventDispatcher();
 
-  function getItems(slice) {
-    const items = [];
-    row.items.forEach(item => {
-      const startTime = getRelativeDate[zoom](item.startTime);
-
-      if (slice.startTime === startTime) {
-        items.push(item);
-      }
-    });
-    return items;
-  }
-
-  function onClick(e, slice, index) {
-    dispatch("click", {
-      event: e,
-      slice,
-      index,
-      items: getItems(slice)
-    });
+  function onClickCell(e) {
+    dispatch("click", e.detail);
   }
 
   function onClickChildren(e) {
     dispatch("click", e.detail);
   }
+
+  $: indexSum = index + index2;
 </script>
 
-<tr class:even={index % 2 === 0} class:odd={index % 2 !== 0}>
+<tr class:even={indexSum % 2 === 0} class:odd={indexSum % 2 !== 0}>
   {#each row.headers as header (header)}
-    <td
-      class:fix={true}
-      on:click={() => (row.expanded = !row.expanded)}
-      {...header}>
-      <div class:content={true} class:header={true}>
-        {@html header.content || ''}
+    <td class:fixed={true}>
+      <div
+        on:click={() => (row.expanded = !row.expanded)}
+        class:header={true}
+        {...header}>
+        <span class:content={true}>
+          {@html header.content || '&nbsp;'}
+        </span>
       </div>
     </td>
   {/each}
 
-  <td colspan={slices.length} class:generated={true}>
-    <div class="cell">
-      {#each slices as slice (slice)}
-        <span
-          bind:this={cells[`${index},${slice.startTime}`]}
-          on:click={e => onClick(e, slice, index)}
-          class:slice={true}
-          class:content={true}
-          startTime={slice.startTime}
-          endTime={slice.endTime}
-          {...slice.body}>
-          {@html slice.body.content || ''}
-        </span>
-      {/each}
+  <td class:generated={true}>
+    <div class:group={true}>
+      <div class:flex={true}>
+        {#each slices as _slice (_slice)}
+          <Slice
+            slice={_slice}
+            type="body"
+            bind:this={cells[`${index},${index2},${_slice.startTime}`]}
+            on:click={onClickCell} />
+        {/each}
+      </div>
     </div>
   </td>
 </tr>
@@ -68,7 +54,8 @@
 {#if row.expanded && row.children}
   {#each row.children as child, index2}
     <svelte:self
-      index={`${index},${index2}`}
+      {index}
+      {index2}
       bind:cells
       {getRelativeDate}
       bind:row={child}

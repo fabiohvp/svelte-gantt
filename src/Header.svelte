@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher, onMount } from "svelte";
+  import Slice from "./Slice.svelte";
   import utils from "./utils.js";
   export let cells;
   export let getCoordinates;
@@ -15,7 +16,8 @@
     const coords = getCoordinates(0, item.startTime, item.endTime);
     if (coords) {
       const trCoords = utils.offset(tr);
-      return `width:${coords.width}px;`;
+      console.log(coords, trCoords);
+      return `width:${coords.width - 1}px;`;
     }
     return "";
   }
@@ -46,47 +48,40 @@
 </script>
 
 <tr bind:this={tr}>
-  <th class:fix={true} class:header={true}>
+  <th class:fixed={true}>
     {#each headers as header}
-      <div on:click={e => onClickStatic(e, header)} {...header}>
+      <div
+        on:click={e => onClickStatic(e, header)}
+        class:header={true}
+        {...header}>
         <span class="content">
           {@html header.content}
         </span>
       </div>
     {/each}
   </th>
-  <th class:generated={true} class:header={true}>
-    <div class="group">
-      &nbsp;
+  <th class:generated={true}>
+    <div class:group={true}>
       {#each getHeader[zoom](slices) as item (item)}
         <span
           on:click={e => onClickGroup(e, item)}
-          class:header={true}
-          class:asbolute={true}
+          class:slice={true}
           startTime={item.startTime}
           endTime={item.endTime}
           style={getStyle(item, cells)}
           {...item}>
-          <span class="content">
-            {@html item.content || ''}
+          <span class:content={true}>
+            {@html item.content || '&nbsp;'}
           </span>
         </span>
       {/each}
     </div>
-    <div class="cell">
-      {#each slices as slice (slice)}
-        <span
-          on:click={e => onClickHeader(e, slice)}
-          class:slice={true}
-          class:header={true}
-          startTime={slice.startTime}
-          endTime={slice.endTime}
-          {...slice.header}>
-          <span class="content">
-            {@html slice.header.content || ''}
-          </span>
-        </span>
-      {/each}
+    <div class:group={true}>
+      <div class:flex={true}>
+        {#each slices as slice (slice)}
+          <Slice {slice} type="header" on:click={onClickHeader} />
+        {/each}
+      </div>
     </div>
   </th>
 </tr>

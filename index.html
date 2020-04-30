@@ -17,126 +17,112 @@
         position: relative;
       }
 
+      .svelte-gantt .absolute {
+        position: absolute;
+      }
+
+      .svelte-gantt .flex {
+        display: flex;
+      }
+
+      .svelte-gantt .content {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        font-weight: normal;
+        padding-left: 0.5em;
+      }
+
+      .svelte-gantt .item {
+        display: none;
+        opacity: 0.6;
+        overflow: hidden;
+      }
+
+      .svelte-gantt .item > .content {
+        background-color: rgba(0, 119, 192, 0.5);
+        border-radius: 1em;
+        padding: 0.3em;
+        margin: 0.3em;
+        overflow: hidden;
+      }
+
+      .svelte-gantt table tbody .content {
+        height: 3em;
+      }
+
+      .svelte-gantt .fixed {
+        position: fixed;
+        z-index: 10;
+      }
+
+      .svelte-gantt td.fixed {
+        background-color: red;
+      }
+
+      .svelte-gantt th.fixed {
+        height: calc(17px + 3em);
+        background-color: yellow;
+        align-items: center;
+        display: flex;
+      }
+
       .svelte-gantt table {
         width: 100%;
         color: #707070;
         border-collapse: collapse;
       }
 
-      .svelte-gantt thead {
+      .svelte-gantt thead .group {
         background-color: #f9fafb;
       }
 
       .svelte-gantt th,
       .svelte-gantt td {
         padding: 0 0;
-        white-space: nowrap;
+        margin: 0 0;
       }
 
-      .svelte-gantt .generated .header:first-child,
-      .svelte-gantt .generated .slice:first-child {
-        border-left: none;
-      }
-
-      /* .svelte-gantt .generated .header.asbolute {
-        float: left;
-        width: 100%;
-      } */
-
-      .svelte-gantt .fix,
-      .svelte-gantt .fix {
-        position: fixed;
-        background-color: red;
-        z-index: 10;
-      }
-
-      .svelte-gantt .cell,
       .svelte-gantt .slice {
-        display: flex;
-      }
-
-      .svelte-gantt .content {
-        width: 100%;
         float: left;
-        font-weight: normal;
-      }
-
-      .svelte-gantt table tbody .content {
-        min-height: 2.5em;
-      }
-
-      .svelte-gantt .content.header {
-        overflow: hidden;
-        border: 1px solid transparent;
-      }
-
-      .svelte-gantt .generated {
-        float: left;
-        width: 100%;
-      }
-
-      .svelte-gantt .generated.title .header {
-        height: 3em;
-        flex: 1;
-        align-items: center;
-        text-align: center;
-      }
-
-      .svelte-gantt .generated.item {
-        display: none;
-        opacity: 0.6;
-        /*height: 1.9em;*/ /* rowHeight = this height + this margin-top + this margin-bottom */
-        align-items: center;
-      }
-
-      .svelte-gantt .generated .slice {
-        flex: 1;
         min-width: 20px;
-        width: auto;
-      }
-
-      .svelte-gantt .generated.item > .content {
-        display: flex;
-        height: 1em;
-        background-color: rgba(0, 119, 192, 0.5);
-        border-radius: 0.75em;
-        padding: 0.3em;
-        margin: 0.3em;
-        overflow: hidden;
-      }
-
-      .svelte-gantt .asbolute {
-        position: absolute;
-        overflow: hidden;
-      }
-
-      .svelte-gantt .generated .slice,
-      .svelte-gantt .generated .header {
         /* border: 0.25px solid rgba(237, 241, 242, 0.75); */
         border-bottom: 1px solid black;
         border-right: 1px solid black;
       }
 
-      .svelte-gantt .generated.group .content {
-        padding-left: 0.5em;
-        text-align: left;
+      .svelte-gantt .flex .slice {
+        flex: 1;
+      }
+
+      .svelte-gantt thead .group:nth-child(2) .content {
+        height: 3em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       /* specifics zooms */
-      .svelte-gantt table[zoom="year"] .generated.group {
+      .svelte-gantt table[zoom="year"] thead .group:first-child {
         display: none;
       }
 
-      .svelte-gantt table[zoom="year"] .generated.title .content {
+      .svelte-gantt table[zoom="year"] thead .content {
         font-size: 2em;
       }
 
-      /* fixed columns */
-      .svelte-gantt .generated .cell {
-        margin-left: 200px; /* sum of all .fix per row */
+      .svelte-gantt .group {
+        float: left;
+        width: 100%;
       }
 
-      .fix {
+      /* fixed columns */
+      .svelte-gantt .group {
+        margin-left: 200px; /* sum of all .fix per row */
+        /* width: calc(100% - 200px); */
+      }
+
+      .svelte-gantt .fixed {
         width: 200px;
       }
 
@@ -156,7 +142,7 @@
   </head>
 
   <body>
-    <!-- <div style="margin-left: 20px; width: 800px;"> -->
+    <!-- <div style="margin-left: 20px; margin-top: 20px; width: 800px;"> -->
     <div id="teste"></div>
     <!-- </div> -->
   </body>
@@ -175,7 +161,7 @@
       return copy;
     }
 
-    const padding = 365;
+    const padding = 4;
     const today = new Date(2020, 3, 2, 0, 0, 0, 0);
 
     let startTime = addDays(today, -padding);
@@ -251,6 +237,24 @@
             ],
           },
         ],
+      },
+      {
+        headers: [
+          {
+            title: "Item 1",
+            content: "abc 2",
+          },
+        ],
+        items: [
+          {
+            content: "teste",
+            title: "teste",
+            class: "teste",
+            startTime: addHours(today, -12).getTime(),
+            endTime: addHours(today, 12).getTime(),
+          },
+        ],
+        expanded: false,
       },
     ];
 

@@ -12,7 +12,15 @@
   function getStyle(item) {
     const coords = getCoordinates(index, item.startTime, item.endTime);
     if (coords) {
-      return `display:flex;top:${coords.top}px;left:${coords.left}px;width:${coords.width}px;height:${coords.height}px;`;
+      const height = (item.getHeight || ((item, coords) => coords.height))(
+        item,
+        coords
+      );
+      const width = (item.getWidth || ((item, coords) => coords.width))(
+        item,
+        coords
+      );
+      return `display:flex;top:${coords.top}px;left:${coords.left}px;width:${width}px;height:${height}px;`;
     }
     return "";
   }
@@ -34,15 +42,15 @@
 {#each row.items as item (item)}
   <div
     on:click={e => onClick(e, item, index)}
-    class:asbolute={true}
+    class:absolute={true}
     class:generated={true}
     class:item={true}
     startTime={item.startTime}
     endTime={item.endTime}
     style={getStyle(item)}
     {...item}>
-    <span class="content">
-      {@html item.content || ''}
+    <span class:content={true}>
+      {@html item.content || '&nbsp;'}
     </span>
   </div>
 {/each}

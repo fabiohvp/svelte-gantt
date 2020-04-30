@@ -194,9 +194,6 @@
   let cells;
   let resizeCount = 0;
 
-  //   $: (slices = getSlices[zoom](new Date(startTime), new Date(endTime))),
-  //     rows,
-  //     resizeCount;
   $: updateSlices(slices, resizeCount, zoom);
   $: (cells = {}), zoom;
 
@@ -216,24 +213,6 @@
       body: {},
       header: {}
     };
-  }
-
-  function getColumnHeader(el) {
-    const th = document.createElement(el);
-    th.className = "cell";
-    return th;
-  }
-
-  function getColumnCell() {
-    const th = document.createElement("th");
-    th.className = "column header";
-    return th;
-  }
-
-  function getDiv(css) {
-    const div = document.createElement("div");
-    div.className = css;
-    return div;
   }
 
   function onClickHeader(e) {
@@ -256,8 +235,8 @@
     const endCell = cells[`${index},${endTimeRelative}`];
 
     if (startCell && endCell) {
-      const startCoords = utils.offset(startCell);
-      const endCoords = utils.offset(endCell);
+      const startCoords = startCell.getOffset();
+      const endCoords = endCell.getOffset();
       const top = startCoords.top - container.offsetTop;
 
       return {
