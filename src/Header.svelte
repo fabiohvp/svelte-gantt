@@ -15,7 +15,7 @@
     const coords = getCoordinates(0, item.startTime, item.endTime);
     if (coords) {
       const trCoords = utils.offset(tr);
-      return `top:${trCoords.top}px;left:${coords.left}px;width:${coords.width}px;`;
+      return `width:${coords.width}px;`;
     }
     return "";
   }
@@ -46,7 +46,7 @@
 </script>
 
 <tr bind:this={tr}>
-  <th class:fix={true} class:group={true}>
+  <th class:fix={true} class:header={true}>
     {#each headers as header}
       <div on:click={e => onClickStatic(e, header)} {...header}>
         <span class="content">
@@ -55,34 +55,24 @@
       </div>
     {/each}
   </th>
-  <th class:generated={true} class:group={true}>
-    &nbsp;
-    {#each getHeader[zoom](slices) as item (item)}
-      <div
-        on:click={e => onClickGroup(e, item)}
-        class:header={true}
-        class:asbolute={true}
-        startTime={item.startTime}
-        endTime={item.endTime}
-        style={getStyle(item, cells)}
-        {...item}>
-        <span class="content">
-          {@html item.content || ''}
+  <th class:generated={true} class:header={true}>
+    <div class="group">
+      &nbsp;
+      {#each getHeader[zoom](slices) as item (item)}
+        <span
+          on:click={e => onClickGroup(e, item)}
+          class:header={true}
+          class:asbolute={true}
+          startTime={item.startTime}
+          endTime={item.endTime}
+          style={getStyle(item, cells)}
+          {...item}>
+          <span class="content">
+            {@html item.content || ''}
+          </span>
         </span>
-      </div>
-    {/each}
-  </th>
-</tr>
-<tr>
-  <th class:fix={true} class:title={true}>
-    &nbsp;
-    {#each headers as header}
-      <div on:click={e => onClickStatic(e, header)}>
-        <span class="content" />
-      </div>
-    {/each}
-  </th>
-  <th colspan={slices.length} class:generated={true} class:title={true}>
+      {/each}
+    </div>
     <div class="cell">
       {#each slices as slice (slice)}
         <span
