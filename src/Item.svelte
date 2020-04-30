@@ -1,6 +1,7 @@
 <script>
   import { createEventDispatcher } from "svelte";
   export let index;
+  export let index2 = 0;
   export let getCoordinates;
   export let getRelativeDate;
   export let row;
@@ -8,19 +9,13 @@
   export let zoom;
 
   const dispatch = createEventDispatcher();
+  $: indexSum = index + index2;
 
   function getStyle(item) {
-    const coords = getCoordinates(index, item.startTime, item.endTime);
+    const coords = getCoordinates(index, index2, item.startTime, item.endTime);
+    console.log("item", coords);
     if (coords) {
-      const height = (item.getHeight || ((item, coords) => coords.height))(
-        item,
-        coords
-      );
-      const width = (item.getWidth || ((item, coords) => coords.width))(
-        item,
-        coords
-      );
-      return `display:flex;top:${coords.top}px;left:${coords.left}px;width:${width}px;height:${height}px;`;
+      return `display:flex;top:${coords.top}px;left:${coords.left}px;width:${coords.width}px;height:${coords.height}px;`;
     }
     return "";
   }
@@ -45,6 +40,8 @@
     class:absolute={true}
     class:generated={true}
     class:item={true}
+    {index}
+    {index2}
     startTime={item.startTime}
     endTime={item.endTime}
     style={getStyle(item)}
@@ -58,7 +55,8 @@
 {#if row.expanded && row.children}
   {#each row.children as child, index2 (child)}
     <svelte:self
-      index={`${index},${index2}`}
+      {index}
+      {index2}
       {getCoordinates}
       {getRelativeDate}
       row={child}

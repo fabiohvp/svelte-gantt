@@ -13,11 +13,9 @@
   let tr;
 
   function getStyle(item, cells) {
-    const coords = getCoordinates(0, item.startTime, item.endTime);
+    const coords = getCoordinates(0, 0, item.startTime, item.endTime);
     if (coords) {
-      const trCoords = utils.offset(tr);
-      console.log(coords, trCoords);
-      return `width:${coords.width - 1}px;`;
+      return `width:${coords.width - 2}px;`;
     }
     return "";
   }
@@ -61,7 +59,7 @@
     {/each}
   </th>
   <th class:generated={true}>
-    <div class:group={true}>
+    <div class:group={true} class:row={true}>
       {#each getHeader[zoom](slices) as item (item)}
         <span
           on:click={e => onClickGroup(e, item)}
@@ -76,7 +74,7 @@
         </span>
       {/each}
     </div>
-    <div class:group={true}>
+    <div class:group={true} class:row={true}>
       <div class:flex={true}>
         {#each slices as slice (slice)}
           <Slice {slice} type="header" on:click={onClickHeader} />

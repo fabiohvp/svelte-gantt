@@ -10,6 +10,7 @@
   export let zoom;
 
   const dispatch = createEventDispatcher();
+  $: indexSum = index + index2;
 
   function onClickCell(e) {
     dispatch("click", e.detail);
@@ -18,11 +19,13 @@
   function onClickChildren(e) {
     dispatch("click", e.detail);
   }
-
-  $: indexSum = index + index2;
 </script>
 
-<tr class:even={indexSum % 2 === 0} class:odd={indexSum % 2 !== 0}>
+<tr
+  class:even={indexSum % 2 === 0}
+  class:odd={indexSum % 2 !== 0}
+  {index}
+  {index2}>
   {#each row.headers as header (header)}
     <td class:fixed={true}>
       <div

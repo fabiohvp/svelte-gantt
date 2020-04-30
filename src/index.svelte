@@ -227,12 +227,12 @@
     dispatch("click.row", e.detail);
   }
 
-  export function getCoordinates(index, startTime, endTime) {
+  export function getCoordinates(index, index2, startTime, endTime) {
     const startTimeRelative = getRelativeDate[zoom](startTime);
     const endTimeRelative = getRelativeDate[zoom](endTime);
 
-    const startCell = cells[`${index},${startTimeRelative}`];
-    const endCell = cells[`${index},${endTimeRelative}`];
+    const startCell = cells[`${index},${index2},${startTimeRelative}`];
+    const endCell = cells[`${index},${index2},${endTimeRelative}`];
 
     if (startCell && endCell) {
       const startCoords = startCell.getOffset();
