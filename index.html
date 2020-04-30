@@ -30,7 +30,6 @@
         align-items: center;
         width: 100%;
         font-weight: normal;
-        padding-left: 0.5em;
       }
 
       .svelte-gantt .item {
@@ -71,6 +70,7 @@
         width: 100%;
         color: #707070;
         border-collapse: collapse;
+        border-spacing: 0;
       }
 
       .svelte-gantt thead .group {
@@ -84,6 +84,7 @@
       }
 
       .svelte-gantt .slice {
+        overflow: hidden;
         float: left;
         min-width: 20px;
         /* border: 0.25px solid rgba(237, 241, 242, 0.75); */
@@ -149,26 +150,15 @@
 
   <script type="module" src="./index.js"></script>
   <script type="module">
-    function addDays(date, days) {
-      const copy = new Date(Number(date));
-      copy.setDate(date.getDate() + days);
-      return copy;
-    }
-
-    function addHours(date, hours) {
-      const copy = new Date(Number(date));
-      copy.setHours(copy.getHours() + hours);
-      return copy;
-    }
-
-    const padding = 4;
+    import utils from "./src/utils.js";
+    const padding = 183;
     const today = new Date(2020, 3, 2, 0, 0, 0, 0);
 
-    let startTime = addDays(today, -padding);
+    let startTime = utils.addDays(today, -padding);
     startTime.setHours(0, 0, 0, 0);
     startTime = startTime.getTime();
 
-    let endTime = addDays(today, padding);
+    let endTime = utils.addDays(today, padding);
     endTime.setHours(0, 0, 0, 0);
     endTime = endTime.getTime();
 
@@ -185,8 +175,8 @@
             content: "teste",
             title: "teste",
             class: "teste",
-            startTime: addDays(today, -1).getTime(),
-            endTime: addDays(today, 1).getTime(),
+            startTime: utils.addDays(today, -1).getTime(),
+            endTime: utils.addDays(today, 1).getTime(),
           },
         ],
         expanded: false,
@@ -201,8 +191,8 @@
             items: [
               {
                 details: "teste1",
-                startTime: addDays(today, -1).getTime(),
-                endTime: addDays(today, -1).getTime(),
+                startTime: utils.addDays(today, -1).getTime(),
+                endTime: utils.addDays(today, -1).getTime(),
               },
             ],
           },
@@ -216,8 +206,8 @@
             items: [
               {
                 details: "teste2",
-                startTime: addDays(today, 0).getTime(),
-                endTime: addHours(today, 12).getTime(),
+                startTime: utils.addDays(today, 0).getTime(),
+                endTime: utils.addHours(today, 12).getTime(),
               },
             ],
           },
@@ -231,31 +221,31 @@
             items: [
               {
                 details: "teste3",
-                startTime: addDays(today, 1).getTime(),
-                endTime: addDays(today, 1).getTime(),
+                startTime: utils.addDays(today, 1).getTime(),
+                endTime: utils.addDays(today, 1).getTime(),
               },
             ],
           },
         ],
       },
-      //   {
-      //     headers: [
-      //       {
-      //         title: "Item 1",
-      //         content: "abc 2",
-      //       },
-      //     ],
-      //     items: [
-      //       {
-      //         content: "teste",
-      //         title: "teste",
-      //         class: "teste",
-      //         startTime: addHours(today, -12).getTime(),
-      //         endTime: addHours(today, 12).getTime(),
-      //       },
-      //     ],
-      //     expanded: false,
-      //   },
+      {
+        headers: [
+          {
+            title: "Item 1",
+            content: "abc 2",
+          },
+        ],
+        items: [
+          {
+            content: "teste",
+            title: "teste",
+            class: "teste",
+            startTime: utils.addHours(today, -12).getTime(),
+            endTime: utils.addHours(today, 12).getTime(),
+          },
+        ],
+        expanded: false,
+      },
     ];
 
     const gantt = new Gantt({
@@ -283,8 +273,8 @@
     //     content: "teste3",
     //     title: "teste3",
     //     class: "teste3",
-    //     startTime: addDays(today, 1).getTime(),
-    //     endTime: addDays(today, 2).getTime(),
+    //     startTime: utils.addDays(today, 1).getTime(),
+    //     endTime: utils.addDays(today, 2).getTime(),
     //   });
     //   gantt.$set({ rows });
     // }, 2000);
@@ -392,7 +382,6 @@
       return formatter[zoom]();
     }
 
-    import utils from "./src/utils.js";
     function getHeaders() {
       const monthNames = [
         "January",

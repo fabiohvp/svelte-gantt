@@ -31,16 +31,41 @@ export default {
     const d = 1 + (w - 1) * 7; // 1st of January + 7 days for each week
     return new Date(y, 0, d);
   },
+  groupBy: (array, fnKey) => {
+    return array.reduce(function (map, item) {
+      const key = fnKey(item);
+      (map[key] = map[key] || []).push(item);
+      return map;
+    }, {});
+  },
   offset: (el) => {
     const rect = el.getBoundingClientRect();
     const scrollLeft =
       window.pageXOffset || document.documentElement.scrollLeft;
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const computedStyle = window.getComputedStyle(el);
+    const borderTop = convertPixelToInt(computedStyle["border-top-width"]);
+    const borderLeft = convertPixelToInt(computedStyle["border-left-width"]);
+    const borderBottom = convertPixelToInt(
+      computedStyle["border-bottom-width"]
+    );
+    const borderRight = convertPixelToInt(computedStyle["border-right-width"]);
+
     return {
-      top: rect.top + scrollTop,
-      left: rect.left + scrollLeft,
-      bottom: rect.bottom + scrollTop,
-      right: rect.right + scrollLeft,
+      top: round(rect.top + scrollTop - borderTop),
+      left: round(rect.left + scrollLeft - borderLeft),
+      bottom: round(rect.bottom + scrollTop - borderBottom),
+      right: round(rect.right + scrollLeft - borderRight),
     };
   },
 };
+
+function round(value) {
+  return value;
+  return Math.floor(value);
+  //return Math.floor(value * 10) / 10;
+}
+
+function convertPixelToInt(pixels) {
+  return parseInt(pixels.replace("px", "")) || 0;
+}

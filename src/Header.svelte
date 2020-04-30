@@ -15,7 +15,7 @@
   function getStyle(item, cells) {
     const coords = getCoordinates(0, 0, item.startTime, item.endTime);
     if (coords) {
-      return `width:${coords.width - 2}px;`;
+      return `width:${coords.width}px;`;
     }
     return "";
   }

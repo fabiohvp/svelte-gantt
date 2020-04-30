@@ -13,7 +13,6 @@
 
   function getStyle(item) {
     const coords = getCoordinates(index, index2, item.startTime, item.endTime);
-    console.log("item", coords);
     if (coords) {
       return `display:flex;top:${coords.top}px;left:${coords.left}px;width:${coords.width}px;height:${coords.height}px;`;
     }
@@ -56,7 +55,7 @@
   {#each row.children as child, index2 (child)}
     <svelte:self
       {index}
-      {index2}
+      index2={index2 + 1}
       {getCoordinates}
       {getRelativeDate}
       row={child}

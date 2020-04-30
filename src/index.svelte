@@ -5,14 +5,6 @@
   import Row from "./Row.svelte";
   import Item from "./Item.svelte";
 
-  function groupBy(array, fnKey) {
-    return array.reduce(function(map, item) {
-      const key = fnKey(item);
-      (map[key] = map[key] || []).push(item);
-      return map;
-    }, {});
-  }
-
   export let endTime;
   export let formatHeader = (s, e, z) => s;
   export let formatSlice = (s, z) => s;
@@ -39,7 +31,9 @@
   };
   export let getHeader = {
     year: slices => {
-      const groups = groupBy(slices, slice => slice.startDate.getFullYear());
+      const groups = utils.groupBy(slices, slice =>
+        slice.startDate.getFullYear()
+      );
       const items = [];
 
       for (let i in groups) {
@@ -56,7 +50,9 @@
       return items;
     },
     month: slices => {
-      const groups = groupBy(slices, slice => slice.startDate.getFullYear());
+      const groups = utils.groupBy(slices, slice =>
+        slice.startDate.getFullYear()
+      );
       const items = [];
 
       for (let i in groups) {
@@ -73,8 +69,13 @@
       return items;
     },
     day: slices => {
-      const groups = groupBy(slices, slice => slice.startDate.getMonth());
+      const groups = utils.groupBy(
+        slices,
+        slice =>
+          `${slice.startDate.getFullYear()}-${slice.startDate.getMonth()}`
+      );
       const items = [];
+      console.log(groups);
 
       for (let i in groups) {
         const first = groups[i][0];
@@ -90,7 +91,11 @@
       return items;
     },
     hour: slices => {
-      const groups = groupBy(slices, slice => slice.startDate.getDate());
+      const groups = utils.groupBy(
+        slices,
+        slice =>
+          `${slice.startDate.getFullYear()}-${slice.startDate.getMonth()}-${slice.startDate.getDate()}`
+      );
       const items = [];
 
       for (let i in groups) {
@@ -235,18 +240,20 @@
     const endCell = cells[`${index},${index2},${endTimeRelative}`];
 
     if (startCell && endCell) {
-      const startCoords = startCell.getOffset();
-      const endCoords = endCell.getOffset();
-      const top = startCoords.top - container.offsetTop;
+      if (startCell.getOffset && endCell.getOffset) {
+        const startCoords = startCell.getOffset();
+        const endCoords = endCell.getOffset();
+        const top = startCoords.top - container.offsetTop;
 
-      return {
-        startCell,
-        endCell,
-        top,
-        left: startCoords.left - container.offsetLeft,
-        height: startCoords.bottom - top,
-        width: endCoords.right - startCoords.left
-      };
+        return {
+          startCell,
+          endCell,
+          top,
+          left: startCoords.left - container.offsetLeft,
+          height: startCoords.bottom - top,
+          width: endCoords.right - startCoords.left
+        };
+      }
     }
 
     return undefined;

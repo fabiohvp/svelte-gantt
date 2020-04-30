@@ -58,7 +58,7 @@
   {#each row.children as child, index2}
     <svelte:self
       {index}
-      {index2}
+      index2={index2 + 1}
       bind:cells
       {getRelativeDate}
       bind:row={child}
