@@ -21,10 +21,6 @@
         position: absolute;
       }
 
-      .svelte-gantt .flex {
-        display: flex;
-      }
-
       .svelte-gantt .content {
         display: flex;
         align-items: center;
@@ -67,13 +63,13 @@
       }
 
       .svelte-gantt table {
-        width: 100%;
+        width: max-content;
         color: #707070;
         border-collapse: collapse;
         border-spacing: 0;
       }
 
-      .svelte-gantt thead .group {
+      .svelte-gantt thead .slice {
         background-color: #f9fafb;
       }
 
@@ -85,15 +81,12 @@
 
       .svelte-gantt .slice {
         overflow: hidden;
+        white-space: nowrap;
         float: left;
-        min-width: 20px;
+        width: 20px;
         /* border: 0.25px solid rgba(237, 241, 242, 0.75); */
-        border-bottom: 1px solid black;
-        border-right: 1px solid black;
-      }
-
-      .svelte-gantt .flex .slice {
-        flex: 1;
+        border-bottom: 1px solid rgba(237, 241, 242, 0.75);
+        border-right: 1px solid rgba(237, 241, 242, 0.75);
       }
 
       .svelte-gantt thead .group:nth-child(2) .content {
@@ -113,13 +106,13 @@
       }
 
       .svelte-gantt .group {
-        float: left;
-        width: 100%;
+        /* float: left; */
       }
 
       /* fixed columns */
+      /* sum of all .fix per row */
       .svelte-gantt .group {
-        margin-left: 200px; /* sum of all .fix per row */
+        margin-left: 200px;
         /* width: calc(100% - 200px); */
       }
 
@@ -151,7 +144,9 @@
   <script type="module" src="./index.js"></script>
   <script type="module">
     import utils from "./src/utils.js";
-    const padding = 183;
+
+    //4,183,184,185, 188,189,190,
+    const padding = 185;
     const today = new Date(2020, 3, 2, 0, 0, 0, 0);
 
     let startTime = utils.addDays(today, -padding);

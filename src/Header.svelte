@@ -75,11 +75,9 @@
       {/each}
     </div>
     <div class:group={true} class:row={true}>
-      <div class:flex={true}>
-        {#each slices as slice (slice)}
-          <Slice {slice} type="header" on:click={onClickHeader} />
-        {/each}
-      </div>
+      {#each slices as slice (slice)}
+        <Slice {slice} type="header" on:click={onClickHeader} />
+      {/each}
     </div>
   </th>
 </tr>

@@ -41,15 +41,13 @@
 
   <td class:generated={true}>
     <div class:group={true}>
-      <div class:flex={true}>
-        {#each slices as _slice (_slice)}
-          <Slice
-            slice={_slice}
-            type="body"
-            bind:this={cells[`${index},${index2},${_slice.startTime}`]}
-            on:click={onClickCell} />
-        {/each}
-      </div>
+      {#each slices as _slice (_slice)}
+        <Slice
+          slice={_slice}
+          type="body"
+          bind:this={cells[`${index},${index2},${_slice.startTime}`]}
+          on:click={onClickCell} />
+      {/each}
     </div>
   </td>
 </tr>

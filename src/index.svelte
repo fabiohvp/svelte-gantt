@@ -75,7 +75,6 @@
           `${slice.startDate.getFullYear()}-${slice.startDate.getMonth()}`
       );
       const items = [];
-      console.log(groups);
 
       for (let i in groups) {
         const first = groups[i][0];
@@ -91,11 +90,7 @@
       return items;
     },
     hour: slices => {
-      const groups = utils.groupBy(
-        slices,
-        slice =>
-          `${slice.startDate.getFullYear()}-${slice.startDate.getMonth()}-${slice.startDate.getDate()}`
-      );
+      const groups = utils.groupBy(slices, slice => slice.startDate.getDate());
       const items = [];
 
       for (let i in groups) {
@@ -243,15 +238,16 @@
       if (startCell.getOffset && endCell.getOffset) {
         const startCoords = startCell.getOffset();
         const endCoords = endCell.getOffset();
-        const top = startCoords.top - container.offsetTop;
+        const top = startCoords.top /*- container.offsetTop*/;
+        const left = startCoords.left /*- container.offsetLeft*/;
 
         return {
           startCell,
           endCell,
           top,
-          left: startCoords.left - container.offsetLeft,
+          left,
           height: startCoords.bottom - top,
-          width: endCoords.right - startCoords.left
+          width: endCoords.right - left
         };
       }
     }

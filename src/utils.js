@@ -52,18 +52,19 @@ export default {
     const borderRight = convertPixelToInt(computedStyle["border-right-width"]);
 
     return {
-      top: round(rect.top + scrollTop - borderTop),
-      left: round(rect.left + scrollLeft - borderLeft),
-      bottom: round(rect.bottom + scrollTop - borderBottom),
-      right: round(rect.right + scrollLeft - borderRight),
+      top: round(rect.top) + scrollTop - borderTop,
+      left: round(rect.left) + scrollLeft - borderLeft,
+      bottom: round(rect.bottom) + scrollTop - borderBottom,
+      right: round(rect.right) + scrollLeft - borderRight,
     };
   },
 };
 
 function round(value) {
   return value;
+  return parseFloat(value.toFixed(1));
   return Math.floor(value);
-  //return Math.floor(value * 10) / 10;
+  return Math.floor(value * 10) / 10;
 }
 
 function convertPixelToInt(pixels) {
