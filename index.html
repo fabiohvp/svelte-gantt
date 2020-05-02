@@ -1,428 +1,432 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-    <title>Svelte app</title>
-    <link rel="stylesheet" href="./index.css" />
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
 
-    <style>
-      .svelte-gantt {
-        /* overflow-x: scroll; */ /* if you don't want to use window scroll */
-        font-size: 14px;
-      }
+	<title>Svelte app</title>
+	<link rel="stylesheet" href="./index.css" />
 
-      .svelte-gantt > .container {
-        position: relative;
-      }
+	<style>
+		.svelte-gantt {
+			/* if you don't want to use window scroll */
+			/* overflow-x: scroll; */
+			font-size: 14px;
+		}
 
-      .svelte-gantt .absolute {
-        position: absolute;
-      }
+		.svelte-gantt>.container {
+			position: relative;
+		}
 
-      .svelte-gantt .content {
-        display: flex;
-        align-items: center;
-        width: 100%;
-        font-weight: normal;
-      }
+		.svelte-gantt .absolute {
+			position: absolute;
+		}
 
-      .svelte-gantt .item {
-        display: none;
-        opacity: 0.6;
-        overflow: hidden;
-      }
+		.svelte-gantt .fixed {
+			position: fixed;
+			z-index: 10;
+		}
 
-      .svelte-gantt .item > .content {
-        background-color: rgba(0, 119, 192, 0.5);
-        border-radius: 1em;
-        padding: 0.3em;
-        margin: 0.3em;
-        overflow: hidden;
-      }
+		.svelte-gantt .content {
+			display: flex;
+			align-items: center;
+			width: 100%;
+			font-weight: normal;
+		}
 
-      .svelte-gantt table tbody .content {
-        height: 3em;
-      }
+		.svelte-gantt .group {
+			clear: both;
+			display: flex;
+		}
 
-      .svelte-gantt .fixed {
-        position: fixed;
-        z-index: 10;
-      }
+		.svelte-gantt .slice {
+			flex: 1;
+			overflow: hidden;
+			white-space: nowrap;
+			border-bottom: 1px solid rgba(237, 241, 242, 0.75);
+			border-right: 1px solid rgba(237, 241, 242, 0.75);
+		}
 
-      .svelte-gantt td.fixed {
-        background-color: red;
-      }
+		.svelte-gantt .item {
+			display: none;
+			opacity: 0.6;
+			overflow: hidden;
+		}
 
-      .svelte-gantt th.fixed {
-        height: calc(17px + 3em);
-        background-color: yellow;
-        align-items: center;
-        display: flex;
-      }
+		.svelte-gantt .item>.content {
+			background-color: rgba(0, 119, 192, 0.5);
+			border-radius: 1em;
+			padding: 0.3em;
+			margin: 0.3em;
+			overflow: hidden;
+		}
 
-      .svelte-gantt table {
-        width: max-content;
-        color: #707070;
-        border-collapse: collapse;
-        border-spacing: 0;
-      }
+		.svelte-gantt table {
+			width: 100%;
+			color: #707070;
+			border-collapse: collapse;
+			border-spacing: 0;
+		}
 
-      .svelte-gantt thead .slice {
-        background-color: #f9fafb;
-      }
+		.svelte-gantt tbody .content {
+			height: 3em;
+		}
 
-      .svelte-gantt th,
-      .svelte-gantt td {
-        padding: 0 0;
-        margin: 0 0;
-      }
+		.svelte-gantt th,
+		.svelte-gantt td {
+			padding: 0 0;
+			margin: 0 0;
+		}
 
-      .svelte-gantt .slice {
-        overflow: hidden;
-        white-space: nowrap;
-        float: left;
-        width: 20px;
-        /* border: 0.25px solid rgba(237, 241, 242, 0.75); */
-        border-bottom: 1px solid rgba(237, 241, 242, 0.75);
-        border-right: 1px solid rgba(237, 241, 242, 0.75);
-      }
+		.svelte-gantt td.fixed {
+			background-color: red;
+		}
 
-      .svelte-gantt thead .group:nth-child(2) .content {
-        height: 3em;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
+		.svelte-gantt th.fixed {
+			height: calc(17px + 3em);
+			background-color: yellow;
+			align-items: center;
+			display: flex;
+		}
 
-      /* specifics zooms */
-      .svelte-gantt table[zoom="year"] thead .group:first-child {
-        display: none;
-      }
+		.svelte-gantt thead .group:nth-child(2) .content {
+			height: 3em;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
 
-      .svelte-gantt table[zoom="year"] thead .content {
-        font-size: 2em;
-      }
+		/* specifics zooms */
+		.svelte-gantt table[zoom="year"] th.fixed {
+			height: calc(6px + 3em);
+		}
 
-      .svelte-gantt .group {
-        /* float: left; */
-      }
+		.svelte-gantt table[zoom="year"] thead .group:nth-child(2) .content {
+			height: unset;
+		}
 
-      /* fixed columns */
-      /* sum of all .fix per row */
-      .svelte-gantt .group {
-        margin-left: 200px;
-        /* width: calc(100% - 200px); */
-      }
+		.svelte-gantt table[zoom="year"] thead .group:first-child {
+			display: none;
+		}
 
-      .svelte-gantt .fixed {
-        width: 200px;
-      }
+		.svelte-gantt table[zoom="year"] thead .content {
+			font-size: 3em;
+		}
 
-      /* testes */
-      body {
-        margin: 0 0;
-      }
+		/* fixed columns */
+		/* sum of all .fix per row */
+		.svelte-gantt .group {
+			margin-left: 200px;
+		}
 
-      .teste3 {
-        background-color: red;
-      }
+		.svelte-gantt .fixed {
+			width: 200px;
+		}
 
-      .weekend {
-        background-color: #f9fafb;
-      }
-    </style>
-  </head>
+		/* testes */
+		body {
+			margin: 0 0;
+		}
 
-  <body>
-    <!-- <div style="margin-left: 20px; margin-top: 20px; width: 800px;"> -->
-    <div id="teste"></div>
-    <!-- </div> -->
-  </body>
+		.teste3 {
+			background-color: red;
+		}
 
-  <script type="module" src="./index.js"></script>
-  <script type="module">
-    import utils from "./src/utils.js";
+		.weekend {
+			background-color: #f9fafb;
+		}
+	</style>
+</head>
 
-    //4,183,184,185, 188,189,190,
-    const padding = 185;
-    const today = new Date(2020, 3, 2, 0, 0, 0, 0);
+<body>
+	<!-- <div style="margin-left: 20px; margin-top: 20px; width: 800px;"> -->
+	<div id="teste"></div>
+	<!-- </div> -->
+</body>
 
-    let startTime = utils.addDays(today, -padding);
-    startTime.setHours(0, 0, 0, 0);
-    startTime = startTime.getTime();
+<script type="module" src="./index.js"></script>
+<script type="module">
+	import utils from "./src/utils.js";
 
-    let endTime = utils.addDays(today, padding);
-    endTime.setHours(0, 0, 0, 0);
-    endTime = endTime.getTime();
+	const padding = 60;
+	const today = new Date(2020, 3, 2, 0, 0, 0, 0);
 
-    const rows = [
-      {
-        headers: [
-          {
-            title: "Item 1",
-            content: "abc",
-          },
-        ],
-        items: [
-          {
-            content: "teste",
-            title: "teste",
-            class: "teste",
-            startTime: utils.addDays(today, -1).getTime(),
-            endTime: utils.addDays(today, 1).getTime(),
-          },
-        ],
-        expanded: false,
-        children: [
-          {
-            headers: [
-              {
-                content: "SubItem 1",
-                title: "sub 1",
-              },
-            ],
-            items: [
-              {
-                details: "teste1",
-                startTime: utils.addDays(today, -1).getTime(),
-                endTime: utils.addDays(today, -1).getTime(),
-              },
-            ],
-          },
-          {
-            headers: [
-              {
-                content: "SubItem 2",
-                title: "sub 2",
-              },
-            ],
-            items: [
-              {
-                details: "teste2",
-                startTime: utils.addDays(today, 0).getTime(),
-                endTime: utils.addHours(today, 12).getTime(),
-              },
-            ],
-          },
-          {
-            headers: [
-              {
-                content: "SubItem 3",
-                title: "sub 3",
-              },
-            ],
-            items: [
-              {
-                details: "teste3",
-                startTime: utils.addDays(today, 1).getTime(),
-                endTime: utils.addDays(today, 1).getTime(),
-              },
-            ],
-          },
-        ],
-      },
-      {
-        headers: [
-          {
-            title: "Item 1",
-            content: "abc 2",
-          },
-        ],
-        items: [
-          {
-            content: "teste",
-            title: "teste",
-            class: "teste",
-            startTime: utils.addHours(today, -12).getTime(),
-            endTime: utils.addHours(today, 12).getTime(),
-          },
-        ],
-        expanded: false,
-      },
-    ];
+	let startTime = utils.addDays(today, -padding);
+	startTime.setHours(0, 0, 0, 0);
+	startTime = startTime.getTime();
 
-    const gantt = new Gantt({
-      target: document.getElementById("teste"),
-      props: {
-        formatHeader,
-        formatSlice,
-        startTime,
-        endTime,
-        headers: getHeaders(),
-        rows,
-        zoom: "day",
-      },
-    });
+	let endTime = utils.addDays(today, padding);
+	endTime.setHours(0, 0, 0, 0);
+	endTime = endTime.getTime();
 
-    gantt.$on("click.header", console.log);
-    gantt.$on("click.item", console.log);
-    gantt.$on("click.row", console.log);
+	const rows = [
+		{
+			headers: [
+				{
+					title: "Item 1",
+					content: "abc",
+				},
+			],
+			items: [
+				{
+					content: "teste",
+					title: "teste",
+					class: "teste",
+					startTime: utils.addDays(today, -1).getTime(),
+					endTime: utils.addDays(today, 1).getTime(),
+				},
+			],
+			expanded: false,
+			children: [
+				{
+					headers: [
+						{
+							content: "SubItem 1",
+							title: "sub 1",
+						},
+					],
+					items: [
+						{
+							details: "teste1",
+							startTime: utils.addDays(today, -1).getTime(),
+							endTime: utils.addDays(today, -1).getTime(),
+						},
+					],
+				},
+				{
+					headers: [
+						{
+							content: "SubItem 2",
+							title: "sub 2",
+						},
+					],
+					items: [
+						{
+							details: "teste2",
+							startTime: utils.addDays(today, 0).getTime(),
+							endTime: utils.addHours(today, 12).getTime(),
+						},
+					],
+				},
+				{
+					headers: [
+						{
+							content: "SubItem 3",
+							title: "sub 3",
+						},
+					],
+					items: [
+						{
+							details: "teste3",
+							startTime: utils.addDays(today, 1).getTime(),
+							endTime: utils.addDays(today, 1).getTime(),
+						},
+					],
+				},
+			],
+		},
+		{
+			headers: [
+				{
+					title: "Item 1",
+					content: "abc 2",
+				},
+			],
+			items: [
+				{
+					content: "teste",
+					title: "teste",
+					class: "teste",
+					startTime: utils.addHours(today, -12).getTime(),
+					endTime: utils.addHours(today, 12).getTime(),
+				},
+			],
+			expanded: false,
+		},
+	];
 
-    // setTimeout(() => {
-    //   gantt.$set({
-    //     zoom: "day",
-    //   });
-    //   rows[0].items.push({
-    //     content: "teste3",
-    //     title: "teste3",
-    //     class: "teste3",
-    //     startTime: utils.addDays(today, 1).getTime(),
-    //     endTime: utils.addDays(today, 2).getTime(),
-    //   });
-    //   gantt.$set({ rows });
-    // }, 2000);
+	const gantt = new Gantt({
+		target: document.getElementById("teste"),
+		props: {
+			formatHeader,
+			formatSlice,
+			startTime,
+			endTime,
+			headers: getHeaders(),
+			rows,
+			zoom: "month",
+		},
+	});
 
-    function formatHeader(item, zoom) {
-      const formatters = {
-        year: () => {
-          return {
-            ...item,
-            content: `${item.startDate.getFullYear()}`,
-            title: item.startDate,
-          };
-        },
-        month: () => {
-          return {
-            ...item,
-            content: `${item.startDate.getFullYear()}`,
-            title: item.startDate,
-          };
-        },
-        day: () => {
-          return {
-            ...item,
-            content: `${item.startDate.getMonth()} ${item.startDate.getFullYear()}`,
-            title: item.startDate,
-          };
-        },
-        hour: () => {
-          return {
-            ...item,
-            content: `${item.startDate.getDate()} ${item.startDate.getMonth()} ${item.startDate.getFullYear()}`,
-            title: item.startDate,
-          };
-        },
-      };
+	gantt.$on("click.header", console.log);
+	gantt.$on("click.item", console.log);
+	gantt.$on("click.row", console.log);
 
-      return formatters[zoom]();
-    }
+	// setTimeout(() => {
+	//   gantt.$set({
+	//     zoom: "day",
+	//   });
+	//   rows[0].items.push({
+	//     content: "teste3",
+	//     title: "teste3",
+	//     class: "teste3",
+	//     startTime: utils.addDays(today, 1).getTime(),
+	//     endTime: utils.addDays(today, 2).getTime(),
+	//   });
+	//   gantt.$set({ rows });
+	// }, 2000);
 
-    function formatSlice(slice, zoom) {
-      const day = new Date(slice.startTime).getDay();
-      const isWeekend = day === 6 || day === 0;
+	function formatHeader(item, zoom) {
+		const formatters = {
+			year: () => {
+				return {
+					...item,
+					content: `${item.startDate.getFullYear()}`,
+					title: item.startDate,
+				};
+			},
+			month: () => {
+				return {
+					...item,
+					content: `${item.startDate.getFullYear()}`,
+					title: item.startDate,
+				};
+			},
+			day: () => {
+				return {
+					...item,
+					content: `${item.startDate.getMonth()} ${item.startDate.getFullYear()}`,
+					title: item.startDate,
+				};
+			},
+			hour: () => {
+				return {
+					...item,
+					content: `${item.startDate.getDate()} ${item.startDate.getMonth()} ${item.startDate.getFullYear()}`,
+					title: item.startDate,
+				};
+			},
+		};
 
-      const formatter = {
-        year: function () {
-          return {
-            ...slice,
-            header: {
-              ...slice.header,
-              content: slice.startDate.getFullYear(),
-              title: slice.startDate,
-            },
-            body: {
-              ...slice.body,
-              title: slice.startDate,
-            },
-          };
-        },
-        month: function () {
-          return {
-            ...slice,
-            header: {
-              ...slice.header,
-              content: slice.startDate.getDate().toString().padStart(2, "0"),
-              title: slice.startDate,
-            },
-            body: {
-              ...slice.body,
-              title: slice.startDate,
-            },
-          };
-        },
-        day: function () {
-          return {
-            ...slice,
-            header: {
-              ...slice.header,
-              content: slice.startDate.getDate().toString().padStart(2, "0"),
-              title: slice.startDate,
-            },
-            body: {
-              ...slice.body,
-              title: slice.startDate,
-              class: isWeekend ? "weekend" : "",
-            },
-          };
-        },
-        hour: function () {
-          return {
-            ...slice,
-            header: {
-              ...slice.header,
-              content: slice.startDate.getHours().toString().padStart(2, "0"),
-              title: slice.startDate,
-            },
-            body: {
-              ...slice.body,
-              title: slice.startDate,
-              class: isWeekend ? "weekend" : "",
-            },
-          };
-        },
-      };
+		return formatters[zoom]();
+	}
 
-      return formatter[zoom]();
-    }
+	function formatSlice(slice, zoom) {
+		const day = new Date(slice.startTime).getDay();
+		const isWeekend = day === 6 || day === 0;
 
-    function getHeaders() {
-      const monthNames = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ];
+		const formatter = {
+			year: function () {
+				return {
+					...slice,
+					header: {
+						...slice.header,
+						content: slice.startDate.getFullYear(),
+						title: slice.startDate,
+					},
+					body: {
+						...slice.body,
+						title: slice.startDate,
+					},
+				};
+			},
+			month: function () {
+				return {
+					...slice,
+					header: {
+						...slice.header,
+						content: slice.startDate.getMonth().toString().padStart(2, "0"),
+						title: slice.startDate,
+					},
+					body: {
+						...slice.body,
+						title: slice.startDate,
+					},
+				};
+			},
+			day: function () {
+				return {
+					...slice,
+					header: {
+						...slice.header,
+						content: slice.startDate.getDate().toString().padStart(2, "0"),
+						title: slice.startDate,
+					},
+					body: {
+						...slice.body,
+						title: slice.startDate,
+						class: isWeekend ? "weekend" : "",
+					},
+				};
+			},
+			hour: function () {
+				return {
+					...slice,
+					header: {
+						...slice.header,
+						content: slice.startDate.getHours().toString().padStart(2, "0"),
+						title: slice.startDate,
+					},
+					body: {
+						...slice.body,
+						title: slice.startDate,
+						class: isWeekend ? "weekend" : "",
+					},
+				};
+			},
+		};
 
-      return [
-        {
-          content: "nome",
-        },
-      ];
-    }
+		return formatter[zoom]();
+	}
 
-    function getGroupsDays(columns) {
-      const groups = [];
-      let currentGroup;
-      let currentMonth = -1;
+	function getHeaders() {
+		const monthNames = [
+			"January",
+			"February",
+			"March",
+			"April",
+			"May",
+			"June",
+			"July",
+			"August",
+			"September",
+			"October",
+			"November",
+			"December",
+		];
 
-      columns.forEach((column) => {
-        const month = column.date.getMonth();
+		return [
+			{
+				content: "nome",
+			},
+		];
+	}
 
-        if (month !== currentMonth) {
-          currentGroup = {
-            colspan: 1,
-            month,
-            date: column.date,
-          };
+	function getGroupsDays(columns) {
+		const groups = [];
+		let currentGroup;
+		let currentMonth = -1;
 
-          groups.push(currentGroup);
-          currentMonth = month;
-        } else {
-          currentGroup.colspan++;
-        }
-      });
+		columns.forEach((column) => {
+			const month = column.date.getMonth();
 
-      return groups;
-    }
-  </script>
+			if (month !== currentMonth) {
+				currentGroup = {
+					colspan: 1,
+					month,
+					date: column.date,
+				};
+
+				groups.push(currentGroup);
+				currentMonth = month;
+			} else {
+				currentGroup.colspan++;
+			}
+		});
+
+		return groups;
+	}
+</script>
+
 </html>
