@@ -25,6 +25,8 @@
 
 		.svelte-gantt .fixed {
 			position: fixed;
+			display: flex;
+			align-items: center;
 			z-index: 10;
 		}
 
@@ -40,9 +42,11 @@
 			display: flex;
 		}
 
-		.svelte-gantt .slice {
+		.svelte-gantt .slice,
+		.svelte-gantt .header {
 			flex: 1;
 			overflow: hidden;
+			min-width: 25px;
 			white-space: nowrap;
 			border-bottom: 1px solid rgba(237, 241, 242, 0.75);
 			border-right: 1px solid rgba(237, 241, 242, 0.75);
@@ -69,8 +73,12 @@
 			border-spacing: 0;
 		}
 
+		.svelte-gantt thead {
+			background-color: rgb(249, 250, 251);
+		}
+
 		.svelte-gantt tbody .content {
-			height: 3em;
+			line-height: 3em;
 		}
 
 		.svelte-gantt th,
@@ -79,19 +87,17 @@
 			margin: 0 0;
 		}
 
-		.svelte-gantt td.fixed {
+		/* .svelte-gantt td.fixed {
 			background-color: red;
-		}
+		} */
 
-		.svelte-gantt th.fixed {
-			height: calc(17px + 3em);
+		/* .svelte-gantt th.fixed {
+			line-height: calc(17px + 3em);
 			background-color: yellow;
-			align-items: center;
-			display: flex;
-		}
+		} */
 
 		.svelte-gantt thead .group:nth-child(2) .content {
-			height: 3em;
+			line-height: 3em;
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -99,28 +105,25 @@
 
 		/* specifics zooms */
 		.svelte-gantt table[zoom="year"] th.fixed {
-			height: calc(6px + 3em);
-		}
-
-		.svelte-gantt table[zoom="year"] thead .group:nth-child(2) .content {
-			height: unset;
+			line-height: calc(6px + 3em);
 		}
 
 		.svelte-gantt table[zoom="year"] thead .group:first-child {
 			display: none;
 		}
 
-		.svelte-gantt table[zoom="year"] thead .content {
+		.svelte-gantt table[zoom="year"] thead .generated .content {
+			line-height: unset;
 			font-size: 3em;
 		}
 
 		/* fixed columns */
 		/* sum of all .fix per row */
 		.svelte-gantt .group {
-			margin-left: 200px;
+			margin-left: 400px;
 		}
 
-		.svelte-gantt .fixed {
+		.svelte-gantt .fixed>.header {
 			width: 200px;
 		}
 
@@ -166,6 +169,10 @@
 				{
 					title: "Item 1",
 					content: "abc",
+				},
+				{
+					title: "Item 2",
+					content: "abcd",
 				},
 			],
 			items: [
@@ -232,6 +239,10 @@
 					title: "Item 1",
 					content: "abc 2",
 				},
+				{
+					title: "Item 2",
+					content: "abcde",
+				},
 			],
 			items: [
 				{
@@ -255,7 +266,7 @@
 			endTime,
 			headers: getHeaders(),
 			rows,
-			zoom: "month",
+			zoom: "day",
 		},
 	});
 
@@ -399,6 +410,9 @@
 		return [
 			{
 				content: "nome",
+			},
+			{
+				content: "nome2",
 			},
 		];
 	}

@@ -1,5 +1,5 @@
 <script>
-  import { createEventDispatcher, onMount } from "svelte";
+  import { createEventDispatcher } from "svelte";
   import Slice from "./Slice.svelte";
   export let index;
   export let index2 = 0;
@@ -26,18 +26,18 @@
   class:odd={indexSum % 2 !== 0}
   {index}
   {index2}>
-  {#each row.headers as header (header)}
-    <td class:fixed={true}>
-      <div
+  <td class:fixed={true}>
+    {#each row.headers as header (header)}
+      <span
         on:click={() => (row.expanded = !row.expanded)}
         class:header={true}
         {...header}>
         <span class:content={true}>
           {@html header.content || '&nbsp;'}
         </span>
-      </div>
-    </td>
-  {/each}
+      </span>
+    {/each}
+  </td>
 
   <td class:generated={true}>
     <div class:group={true}>

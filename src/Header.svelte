@@ -48,14 +48,14 @@
 <tr bind:this={tr}>
   <th class:fixed={true}>
     {#each headers as header}
-      <div
+      <span
         on:click={e => onClickStatic(e, header)}
         class:header={true}
         {...header}>
         <span class="content">
           {@html header.content}
         </span>
-      </div>
+      </span>
     {/each}
   </th>
   <th class:generated={true}>
