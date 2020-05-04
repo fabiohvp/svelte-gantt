@@ -1,10 +1,11 @@
 <script>
   import { createEventDispatcher } from "svelte";
   import utils from "./utils.js";
-  const dispatch = createEventDispatcher();
+  export let coords = "";
   export let slice;
   export let type;
 
+  const dispatch = createEventDispatcher();
   let element;
 
   export function getOffset() {
@@ -37,6 +38,7 @@
   class:slice={true}
   startTime={slice.startTime}
   endTime={slice.endTime}
+  {coords}
   {...slice[type]}>
   <span class:content={true}>
     {@html slice[type].content || '&nbsp;'}

@@ -3,6 +3,7 @@
   import utils from "./utils.js";
   import Header from "./Header.svelte";
   import Row from "./Row.svelte";
+  import Rows from "./Rows.svelte";
   import Item from "./Item.svelte";
 
   export let endTime;
@@ -191,11 +192,11 @@
 
   const dispatch = createEventDispatcher();
   let container;
-  let cells;
+  let loadedRows = false;
+  let tbody;
   let resizeCount = 0;
 
   $: updateSlices(slices, resizeCount, zoom);
-  $: (cells = {}), zoom;
 
   function updateSlices(_slices, resizeCount, zoom) {
     slices = getSlices[zoom](new Date(startTime), new Date(endTime));
@@ -226,37 +227,42 @@
   function onClickRow(e) {
     dispatch("click.row", e.detail);
   }
+  function onLoadRows(e) {
+    loadedRows = true;
+    container.classList.remove("hidden");
+  }
+
+  function onResize(e) {
+    resizeCount++;
+  }
 
   export function getCoordinates(index, index2, startTime, endTime) {
     const startTimeRelative = getRelativeDate[zoom](startTime);
     const endTimeRelative = getRelativeDate[zoom](endTime);
 
-    const startCell = cells[`${index},${index2},${startTimeRelative}`];
-    const endCell = cells[`${index},${index2},${endTimeRelative}`];
+    const startCell = tbody.querySelector(
+      `.slice[coords="${index},${index2}"][starttime="${startTimeRelative}"]`
+    );
+    const endCell = tbody.querySelector(
+      `.slice[coords="${index},${index2}"][starttime="${endTimeRelative}"]`
+    );
 
     if (startCell && endCell) {
-      if (startCell.getOffset && endCell.getOffset) {
-        const startCoords = startCell.getOffset();
-        const endCoords = endCell.getOffset();
-        const top = startCoords.top /*- container.offsetTop*/;
-        const left = startCoords.left /*- container.offsetLeft*/;
+      const startCoords = utils.offset(startCell);
+      const endCoords = utils.offset(endCell);
+      const top = startCoords.top /*- container.offsetTop*/;
+      const left = startCoords.left /*- container.offsetLeft*/;
 
-        return {
-          startCell,
-          endCell,
-          top,
-          left,
-          height: startCoords.bottom - top,
-          width: endCoords.right - left
-        };
-      }
+      return {
+        startCell,
+        endCell,
+        top,
+        left,
+        height: startCoords.bottom - top,
+        width: endCoords.right - left
+      };
     }
-
     return undefined;
-  }
-
-  function onResize(e) {
-    resizeCount++;
   }
 </script>
 
@@ -266,41 +272,50 @@
   import "./tailwind.css";
 </script> -->
 <div class="svelte-gantt">
-  <div bind:this={container} class="container">
+  <div bind:this={container} class="container hidden">
     <table {zoom} {startTime} {endTime}>
       <thead>
-        <Header
-          {cells}
-          {getCoordinates}
-          {getHeader}
-          {headers}
+        {#if loadedRows}
+          <Header
+            {getCoordinates}
+            {getHeader}
+            {headers}
+            {slices}
+            {zoom}
+            on:click={onClickHeader} />
+        {/if}
+      </thead>
+      <tbody bind:this={tbody}>
+        <Rows
+          {getRelativeDate}
+          bind:rows
           {slices}
           {zoom}
-          on:click={onClickHeader} />
-      </thead>
-      <tbody>
-        {#each rows as row, index (row)}
+          on:click={onClickRow}
+          on:loaded={onLoadRows} />
+        <!-- {#each rows as row, index (row)}
           <Row
             {index}
-            bind:cells
             {getRelativeDate}
             bind:row
             {slices}
             {zoom}
             on:click={onClickRow} />
-        {/each}
+        {/each} -->
       </tbody>
     </table>
 
-    {#each rows as row, index (row)}
-      <Item
-        {index}
-        {getCoordinates}
-        {getRelativeDate}
-        {row}
-        {slices}
-        {zoom}
-        on:click={onClickItem} />
-    {/each}
+    {#if loadedRows}
+      {#each rows as row, index (row)}
+        <Item
+          {index}
+          {getCoordinates}
+          {getRelativeDate}
+          {row}
+          {slices}
+          {zoom}
+          on:click={onClickItem} />
+      {/each}
+    {/if}
   </div>
 </div>

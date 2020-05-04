@@ -3,7 +3,6 @@
   import Slice from "./Slice.svelte";
   export let index;
   export let index2 = 0;
-  export let cells;
   export let getRelativeDate;
   export let row;
   export let slices;
@@ -43,9 +42,9 @@
     <div class:group={true}>
       {#each slices as _slice (_slice)}
         <Slice
+          coords={`${index},${index2}`}
           slice={_slice}
           type="body"
-          bind:this={cells[`${index},${index2},${_slice.startTime}`]}
           on:click={onClickCell} />
       {/each}
     </div>
@@ -57,7 +56,6 @@
     <svelte:self
       {index}
       index2={index2 + 1}
-      bind:cells
       {getRelativeDate}
       bind:row={child}
       {slices}

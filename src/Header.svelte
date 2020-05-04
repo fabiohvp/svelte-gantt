@@ -2,7 +2,6 @@
   import { createEventDispatcher, onMount } from "svelte";
   import Slice from "./Slice.svelte";
   import utils from "./utils.js";
-  export let cells;
   export let getCoordinates;
   export let getHeader;
   export let headers;
@@ -12,7 +11,7 @@
   const dispatch = createEventDispatcher();
   let tr;
 
-  function getStyle(item, cells) {
+  function getStyle(item) {
     const coords = getCoordinates(0, 0, item.startTime, item.endTime);
     if (coords) {
       return `width:${coords.width}px;`;
@@ -66,7 +65,7 @@
           class:slice={true}
           startTime={item.startTime}
           endTime={item.endTime}
-          style={getStyle(item, cells)}
+          style={getStyle(item)}
           {...item}>
           <span class:content={true}>
             {@html item.content || '&nbsp;'}

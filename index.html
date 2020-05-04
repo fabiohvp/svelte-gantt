@@ -19,15 +19,20 @@
 			position: relative;
 		}
 
+		.svelte-gantt .hidden {
+			display: none;
+		}
+
 		.svelte-gantt .absolute {
 			position: absolute;
 		}
 
 		.svelte-gantt .fixed {
-			position: fixed;
+			background-color: white;
+			position: sticky;
+			left: 0;
 			display: flex;
 			align-items: center;
-			z-index: 10;
 		}
 
 		.svelte-gantt .content {
@@ -87,15 +92,6 @@
 			margin: 0 0;
 		}
 
-		/* .svelte-gantt td.fixed {
-			background-color: red;
-		} */
-
-		/* .svelte-gantt th.fixed {
-			line-height: calc(17px + 3em);
-			background-color: yellow;
-		} */
-
 		.svelte-gantt thead .group:nth-child(2) .content {
 			line-height: 3em;
 			display: flex;
@@ -118,11 +114,6 @@
 		}
 
 		/* fixed columns */
-		/* sum of all .fix per row */
-		.svelte-gantt .group {
-			margin-left: 400px;
-		}
-
 		.svelte-gantt .fixed>.header {
 			width: 200px;
 		}
