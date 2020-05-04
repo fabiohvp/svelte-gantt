@@ -29,6 +29,7 @@
     {#each row.headers as header (header)}
       <span
         on:click={() => (row.expanded = !row.expanded)}
+        class:border={true}
         class:header={true}
         {...header}>
         <span class:content={true}>

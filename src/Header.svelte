@@ -49,6 +49,7 @@
     {#each headers as header}
       <span
         on:click={e => onClickStatic(e, header)}
+        class:border={true}
         class:header={true}
         {...header}>
         <span class="content">
@@ -62,7 +63,7 @@
       {#each getHeader[zoom](slices) as item (item)}
         <span
           on:click={e => onClickGroup(e, item)}
-          class:group-slice={true}
+          class:border={true}
           startTime={item.startTime}
           endTime={item.endTime}
           style={getStyle(item)}
