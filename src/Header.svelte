@@ -62,7 +62,7 @@
       {#each getHeader[zoom](slices) as item (item)}
         <span
           on:click={e => onClickGroup(e, item)}
-          class:slice={true}
+          class:group-slice={true}
           startTime={item.startTime}
           endTime={item.endTime}
           style={getStyle(item)}

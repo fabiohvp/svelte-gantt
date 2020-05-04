@@ -293,15 +293,6 @@
           {zoom}
           on:click={onClickRow}
           on:loaded={onLoadRows} />
-        <!-- {#each rows as row, index (row)}
-          <Row
-            {index}
-            {getRelativeDate}
-            bind:row
-            {slices}
-            {zoom}
-            on:click={onClickRow} />
-        {/each} -->
       </tbody>
     </table>
 

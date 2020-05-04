@@ -31,8 +31,7 @@
 			background-color: white;
 			position: sticky;
 			left: 0;
-			display: flex;
-			align-items: center;
+			z-index: 1;
 		}
 
 		.svelte-gantt .content {
@@ -47,14 +46,19 @@
 			display: flex;
 		}
 
-		.svelte-gantt .slice,
-		.svelte-gantt .header {
+		.svelte-gantt .slice {
 			flex: 1;
 			overflow: hidden;
 			min-width: 25px;
 			white-space: nowrap;
-			border-bottom: 1px solid rgba(237, 241, 242, 0.75);
-			border-right: 1px solid rgba(237, 241, 242, 0.75);
+		}
+
+		.svelte-gantt .slice,
+		.svelte-gantt .group-slice {
+			/* border-bottom: 1px solid rgba(237, 241, 242, 0.75);
+			border-right: 1px solid rgba(237, 241, 242, 0.75); */
+			border-bottom: 1px solid black;
+			border-right: 1px solid black;
 		}
 
 		.svelte-gantt .item {
@@ -72,7 +76,7 @@
 		}
 
 		.svelte-gantt table {
-			width: 100%;
+			/* width: 100%; */
 			color: #707070;
 			border-collapse: collapse;
 			border-spacing: 0;
@@ -114,8 +118,10 @@
 		}
 
 		/* fixed columns */
-		.svelte-gantt .fixed>.header {
-			width: 200px;
+		.svelte-gantt .fixed .header {
+			/*remover*/
+			float: left;
+			width: 100px;
 		}
 
 		/* testes */
@@ -143,7 +149,7 @@
 <script type="module">
 	import utils from "./src/utils.js";
 
-	const padding = 60;
+	const padding = 2;
 	const today = new Date(2020, 3, 2, 0, 0, 0, 0);
 
 	let startTime = utils.addDays(today, -padding);
