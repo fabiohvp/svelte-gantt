@@ -9,119 +9,57 @@
 	<link rel="stylesheet" href="./index.css" />
 
 	<style>
+		/* if you don't want to use window scroll */
+		/* #teste {
+			overflow-x: scroll;
+		} */
+
 		.svelte-gantt {
-			/* if you don't want to use window scroll */
-			/* overflow-x: scroll; */
 			font-size: 14px;
-		}
-
-		.svelte-gantt>.container {
 			position: relative;
-		}
-
-		.svelte-gantt .hidden {
-			display: none;
+			display: flex;
+			width: max-content;
+			min-width: 100%;
 		}
 
 		.svelte-gantt .absolute {
 			position: absolute;
 		}
 
-		.svelte-gantt .fixed {
-			background-color: white;
-			position: sticky;
-			left: 0;
-			z-index: 1;
+		div {
+			position: relative;
+			border: 1px solid black;
+			min-height: 28px;
+			flex: 1;
 		}
 
-		.svelte-gantt .content {
+		.header-side {
+			float: left;
+			width: 100px;
+			height: 100%;
+		}
+
+		.slice {
+			flex: 1;
+			border: 1px solid #eee;
+		}
+
+		.align-center {
+			min-width: 20px;
 			display: flex;
 			align-items: center;
-			width: 100%;
-			font-weight: normal;
-		}
-
-		.svelte-gantt .group {
-			clear: both;
-			display: flex;
-		}
-
-		.svelte-gantt .slice {
-			flex: 1;
-			overflow: hidden;
-			min-width: 25px;
-			white-space: nowrap;
-		}
-
-		.svelte-gantt .slice,
-		.svelte-gantt .group-slice {
-			/* border-bottom: 1px solid rgba(237, 241, 242, 0.75);
-			border-right: 1px solid rgba(237, 241, 242, 0.75); */
-			border-bottom: 1px solid black;
-			border-right: 1px solid black;
+			justify-content: center;
 		}
 
 		.svelte-gantt .item {
 			display: none;
 			opacity: 0.6;
 			overflow: hidden;
-		}
-
-		.svelte-gantt .item>.content {
 			background-color: rgba(0, 119, 192, 0.5);
 			border-radius: 1em;
-			padding: 0.3em;
-			margin: 0.3em;
+			/* padding: 0.3em;
+			margin: 0.3em; */
 			overflow: hidden;
-		}
-
-		.svelte-gantt table {
-			/* width: 100%; */
-			color: #707070;
-			border-collapse: collapse;
-			border-spacing: 0;
-		}
-
-		.svelte-gantt thead {
-			background-color: rgb(249, 250, 251);
-		}
-
-		.svelte-gantt tbody .content {
-			line-height: 3em;
-		}
-
-		.svelte-gantt th,
-		.svelte-gantt td {
-			padding: 0 0;
-			margin: 0 0;
-		}
-
-		.svelte-gantt thead .group:nth-child(2) .content {
-			line-height: 3em;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-
-		/* specifics zooms */
-		.svelte-gantt table[zoom="year"] th.fixed {
-			line-height: calc(6px + 3em);
-		}
-
-		.svelte-gantt table[zoom="year"] thead .group:first-child {
-			display: none;
-		}
-
-		.svelte-gantt table[zoom="year"] thead .generated .content {
-			line-height: unset;
-			font-size: 3em;
-		}
-
-		/* fixed columns */
-		.svelte-gantt .fixed .header {
-			/*remover*/
-			float: left;
-			width: 100px;
 		}
 
 		/* testes */
@@ -131,6 +69,10 @@
 
 		.teste3 {
 			background-color: red;
+		}
+
+		.today {
+			background-color: #f1c40f1a;
 		}
 
 		.weekend {
@@ -149,8 +91,8 @@
 <script type="module">
 	import utils from "./src/utils.js";
 
-	const padding = 2;
-	const today = new Date(2020, 3, 2, 0, 0, 0, 0);
+	const padding = 4;
+	const today = new Date(2020, 3, 27, 0, 0, 0, 0);
 
 	let startTime = utils.addDays(today, -padding);
 	startTime.setHours(0, 0, 0, 0);
@@ -189,6 +131,10 @@
 							content: "SubItem 1",
 							title: "sub 1",
 						},
+						{
+							content: "SubItem 1 1",
+							title: "sub 1 1",
+						},
 					],
 					items: [
 						{
@@ -204,6 +150,10 @@
 							content: "SubItem 2",
 							title: "sub 2",
 						},
+						{
+							content: "SubItem 2 2",
+							title: "sub 2 2",
+						},
 					],
 					items: [
 						{
@@ -218,6 +168,10 @@
 						{
 							content: "SubItem 3",
 							title: "sub 3",
+						},
+						{
+							content: "SubItem 3 3",
+							title: "sub 3 3",
 						},
 					],
 					items: [
@@ -272,17 +226,17 @@
 	gantt.$on("click.row", console.log);
 
 	// setTimeout(() => {
-	//   gantt.$set({
-	//     zoom: "day",
-	//   });
-	//   rows[0].items.push({
-	//     content: "teste3",
-	//     title: "teste3",
-	//     class: "teste3",
-	//     startTime: utils.addDays(today, 1).getTime(),
-	//     endTime: utils.addDays(today, 2).getTime(),
-	//   });
-	//   gantt.$set({ rows });
+	// 	gantt.$set({
+	// 		zoom: "day",
+	// 	});
+	// 	rows[1].items.push({
+	// 		content: "teste3",
+	// 		title: "teste3",
+	// 		class: "teste3",
+	// 		startTime: utils.addDays(today, 1).getTime(),
+	// 		endTime: utils.addDays(today, 2).getTime(),
+	// 	});
+	// 	gantt.$set({ rows });
 	// }, 2000);
 
 	function formatHeader(item, zoom) {
@@ -323,6 +277,17 @@
 	function formatSlice(slice, zoom) {
 		const day = new Date(slice.startTime).getDay();
 		const isWeekend = day === 6 || day === 0;
+		const todayTime = today.getTime();
+		const isToday = todayTime >= slice.startTime && todayTime <= slice.endTime;
+
+		const classes = [];
+
+		if (isWeekend) {
+			classes.push("weekend");
+		}
+		if (isToday) {
+			classes.push("today");
+		}
 
 		const formatter = {
 			year: function () {
@@ -336,6 +301,7 @@
 					body: {
 						...slice.body,
 						title: slice.startDate,
+						class: classes.join(" "),
 					},
 				};
 			},
@@ -344,12 +310,13 @@
 					...slice,
 					header: {
 						...slice.header,
-						content: slice.startDate.getMonth().toString().padStart(2, "0"),
+						content: (slice.startDate.getMonth() + 1).toString().padStart(2, "0"),
 						title: slice.startDate,
 					},
 					body: {
 						...slice.body,
 						title: slice.startDate,
+						class: classes.join(" "),
 					},
 				};
 			},
@@ -364,7 +331,7 @@
 					body: {
 						...slice.body,
 						title: slice.startDate,
-						class: isWeekend ? "weekend" : "",
+						class: classes.join(" "),
 					},
 				};
 			},
@@ -379,7 +346,7 @@
 					body: {
 						...slice.body,
 						title: slice.startDate,
-						class: isWeekend ? "weekend" : "",
+						class: classes.join(" "),
 					},
 				};
 			},

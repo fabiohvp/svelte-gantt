@@ -36,6 +36,7 @@
   bind:this={element}
   on:click={e => onClick(e, slice)}
   class:slice={true}
+  class:align-center={true}
   startTime={slice.startTime}
   endTime={slice.endTime}
   {coords}

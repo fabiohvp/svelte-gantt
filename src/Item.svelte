@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher } from "svelte";
+  import utils from "./utils.js";
   export let index;
   export let index2 = 0;
   export let getCoordinates;
@@ -37,7 +38,6 @@
   <div
     on:click={e => onClick(e, item, index)}
     class:absolute={true}
-    class:generated={true}
     class:item={true}
     {index}
     {index2}

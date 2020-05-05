@@ -1,9 +1,13 @@
 <script>
   import { createEventDispatcher } from "svelte";
   import utils from "./utils.js";
-  import Header from "./Header.svelte";
-  import Row from "./Row.svelte";
-  import Rows from "./Rows.svelte";
+  //   import Header from "./Header.svelte";
+  //   import Row from "./Row.svelte";
+  //   import Rows from "./Rows.svelte";
+  import BodyRow from "./BodyRow.svelte";
+  import HeaderColumns from "./HeaderColumns.svelte";
+  import HeaderGroup from "./HeaderGroup.svelte";
+  import HeaderRow from "./HeaderRow.svelte";
   import Item from "./Item.svelte";
 
   export let endTime;
@@ -192,8 +196,6 @@
 
   const dispatch = createEventDispatcher();
   let container;
-  let loadedRows = false;
-  let tbody;
   let resizeCount = 0;
 
   $: updateSlices(slices, resizeCount, zoom);
@@ -227,10 +229,6 @@
   function onClickRow(e) {
     dispatch("click.row", e.detail);
   }
-  function onLoadRows(e) {
-    loadedRows = true;
-    container.classList.remove("hidden");
-  }
 
   function onResize(e) {
     resizeCount++;
@@ -240,10 +238,10 @@
     const startTimeRelative = getRelativeDate[zoom](startTime);
     const endTimeRelative = getRelativeDate[zoom](endTime);
 
-    const startCell = tbody.querySelector(
+    const startCell = container.querySelector(
       `.slice[coords="${index},${index2}"][starttime="${startTimeRelative}"]`
     );
-    const endCell = tbody.querySelector(
+    const endCell = container.querySelector(
       `.slice[coords="${index},${index2}"][starttime="${endTimeRelative}"]`
     );
 
@@ -268,45 +266,50 @@
 
 <svelte:window on:resize={onResize} />
 
-<!-- <script context="module">
-  import "./tailwind.css";
-</script> -->
-<div class="svelte-gantt">
-  <div bind:this={container} class="container hidden">
-    <table {zoom} {startTime} {endTime}>
-      <thead>
-        {#if loadedRows}
-          <Header
-            {getCoordinates}
-            {getHeader}
-            {headers}
-            {slices}
-            {zoom}
-            on:click={onClickHeader} />
-        {/if}
-      </thead>
-      <tbody bind:this={tbody}>
-        <Rows
-          {getRelativeDate}
-          bind:rows
-          {slices}
-          {zoom}
-          on:click={onClickRow}
-          on:loaded={onLoadRows} />
-      </tbody>
-    </table>
-
-    {#if loadedRows}
-      {#each rows as row, index (row)}
-        <Item
-          {index}
-          {getCoordinates}
-          {getRelativeDate}
-          {row}
-          {slices}
-          {zoom}
-          on:click={onClickItem} />
+<div bind:this={container} class="svelte-gantt">
+  <div
+    style="flex: none;height: 100%;position: sticky; left: 0;background-color:
+    white;z-index: 1;">
+    <div style="height: calc(5em + 2px);display: flex; align-items: center;">
+      {#each headers as header}
+        <div
+          on:click={e => onClickHeader(e)}
+          class:header-side={true}
+          {...header}>
+          <span class="content">
+            {@html header.content}
+          </span>
+        </div>
       {/each}
-    {/if}
+    </div>
+    {#each rows as row, index (row)}
+      <HeaderColumns headers={row.headers} bind:row on:click={onClickHeader} />
+    {/each}
   </div>
+  <div style="flex: 1;">
+    <div class="" style="height: 2.5em;display: flex;">
+      {#if container}
+        <HeaderGroup {getCoordinates} {getHeader} {slices} {zoom} />
+      {/if}
+    </div>
+    <div class="" style="height: 2.5em;display: flex;">
+      <HeaderRow {slices} />
+    </div>
+    {#each rows as row, index (row)}
+      <BodyRow {index} bind:row {slices} />
+    {/each}
+  </div>
+
+  {#if container}
+    {#each rows as row, index (row)}
+      <Item
+        {index}
+        {getCoordinates}
+        {getRelativeDate}
+        {row}
+        {slices}
+        {zoom}
+        on:click={onClickItem} />
+    {/each}
+  {/if}
 </div>
