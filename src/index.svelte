@@ -202,9 +202,6 @@
 
   function updateSlices(_slices, resizeCount, zoom) {
     slices = getSlices[zoom](new Date(startTime), new Date(endTime));
-    setTimeout(() => {
-      rows = rows;
-    }, 1);
   }
 
   function getSlice(startDate, endDate) {
@@ -267,14 +264,13 @@
 <svelte:window on:resize={onResize} />
 
 <div bind:this={container} class="svelte-gantt">
-  <div
-    style="flex: none;height: 100%;position: sticky; left: 0;background-color:
-    white;z-index: 1;">
-    <div style="height: calc(5em + 2px);display: flex; align-items: center;">
+  <div class="header-side-group">
+    <div class="header-side align-center">
       {#each headers as header}
         <div
           on:click={e => onClickHeader(e)}
-          class:header-side={true}
+          class:align-center={true}
+          class:slice={true}
           {...header}>
           <span class="content">
             {@html header.content}
@@ -287,12 +283,12 @@
     {/each}
   </div>
   <div style="flex: 1;">
-    <div class="" style="height: 2.5em;display: flex;">
+    <div class="header-group">
       {#if container}
         <HeaderGroup {getCoordinates} {getHeader} {slices} {zoom} />
       {/if}
     </div>
-    <div class="" style="height: 2.5em;display: flex;">
+    <div class="header-slices">
       <HeaderRow {slices} />
     </div>
     {#each rows as row, index (row)}

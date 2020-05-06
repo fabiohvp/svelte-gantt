@@ -25,18 +25,17 @@
   }
 </script>
 
-<div class="" style="height: 2.5em;display: flex;">
-  {#each getHeader[zoom](slices) as item (item)}
-    <span
-      on:click={e => onClick(e, item)}
-      class:group-slice={true}
-      startTime={item.startTime}
-      endTime={item.endTime}
-      style={getStyle(item)}
-      {...item}>
-      <span class:content={true}>
-        {@html item.content || '&nbsp;'}
-      </span>
+{#each getHeader[zoom](slices) as item (item)}
+  <span
+    on:click={e => onClick(e, item)}
+    class:slice={true}
+    class:align-center={true}
+    startTime={item.startTime}
+    endTime={item.endTime}
+    style={getStyle(item)}
+    {...item}>
+    <span class:content={true}>
+      {@html item.content || '&nbsp;'}
     </span>
-  {/each}
-</div>
+  </span>
+{/each}

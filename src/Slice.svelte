@@ -35,8 +35,9 @@
 <span
   bind:this={element}
   on:click={e => onClick(e, slice)}
-  class:slice={true}
+  class:row-height={type === 'body'}
   class:align-center={true}
+  class:slice={true}
   startTime={slice.startTime}
   endTime={slice.endTime}
   {coords}

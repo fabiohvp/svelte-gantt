@@ -17,7 +17,7 @@
   }
 </script>
 
-<div class="" style="display: flex;min-width:min-content;">
+<div class="body-slices noselect">
   {#each slices as _slice (_slice)}
     <Slice
       coords={`${index},${index2}`}

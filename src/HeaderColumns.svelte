@@ -19,16 +19,17 @@
   }
 </script>
 
-<div>
+<div class="row-height">
   {#each headers as header}
-    <div
+    <span
       on:click={e => onClickCell(e, header)}
-      class:header-side={true}
+      class:align-center={true}
+      class:slice={true}
       {...header}>
       <span class="content">
         {@html header.content}
       </span>
-    </div>
+    </span>
   {/each}
 </div>
 
