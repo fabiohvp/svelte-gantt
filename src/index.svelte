@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher } from "svelte";
+  import scroll from "./scroll.js";
   import utils from "./utils.js";
   //   import Header from "./Header.svelte";
   //   import Row from "./Row.svelte";
@@ -190,6 +191,7 @@
   };
   export let headers;
   export let rows;
+  export let slider;
   export let slices;
   export let startTime;
   export let zoom;
@@ -197,6 +199,7 @@
   const dispatch = createEventDispatcher();
   let container;
   let resizeCount = 0;
+  let window;
 
   $: updateSlices(slices, resizeCount, zoom);
 
@@ -283,7 +286,7 @@
     {/each}
   </div>
   <div style="flex: 1;">
-    <div class="header-group">
+    <div class="header-group noselect" use:scroll={slider}>
       {#if container}
         <HeaderGroup {getCoordinates} {getHeader} {slices} {zoom} />
       {/if}

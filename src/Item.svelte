@@ -45,7 +45,7 @@
     endTime={item.endTime}
     style={getStyle(item)}
     {...item}>
-    <span class:content={true}>
+    <span class:content={true} class:align-center={true}>
       {@html item.content || '&nbsp;'}
     </span>
   </div>

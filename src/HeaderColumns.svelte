@@ -19,7 +19,7 @@
   }
 </script>
 
-<div class="row-height">
+<div class="row-height header-side-column">
   {#each headers as header}
     <span
       on:click={e => onClickCell(e, header)}
