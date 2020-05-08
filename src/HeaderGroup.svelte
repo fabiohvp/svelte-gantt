@@ -10,6 +10,7 @@
 
   function getStyle(item) {
     const coords = getCoordinates(0, 0, item.startTime, item.endTime);
+    console.log(item.startTime, item.endTime, coords);
     if (coords) {
       return `width:${coords.width}px;`;
     }

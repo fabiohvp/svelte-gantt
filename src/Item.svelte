@@ -36,7 +36,6 @@
 
 {#each row.items as item (item)}
   <div
-    on:click={e => onClick(e, item, index)}
     class:absolute={true}
     class:item={true}
     {index}
@@ -45,22 +44,11 @@
     endTime={item.endTime}
     style={getStyle(item)}
     {...item}>
-    <span class:content={true} class:align-center={true}>
+    <span
+      class:content={true}
+      class:align-center={true}
+      on:click={e => onClick(e, item, index)}>
       {@html item.content || '&nbsp;'}
     </span>
   </div>
 {/each}
-
-{#if row.expanded && row.children}
-  {#each row.children as child, index2 (child)}
-    <svelte:self
-      {index}
-      index2={index2 + 1}
-      {getCoordinates}
-      {getRelativeDate}
-      row={child}
-      {slices}
-      {zoom}
-      on:click={e => onClickChildren(e)} />
-  {/each}
-{/if}

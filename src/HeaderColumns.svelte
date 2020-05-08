@@ -6,7 +6,10 @@
   const dispatch = createEventDispatcher();
 
   function onClickCell(e, header) {
-    row.expanded = !row.expanded;
+    if (row.children.length > 0) {
+      row.expanded = !row.expanded;
+    }
+
     dispatch("click", {
       event: e,
       header,
@@ -15,6 +18,7 @@
   }
 
   function onClickChildren(e) {
+    console.log("pq1p");
     dispatch("click", e.detail);
   }
 </script>
@@ -24,6 +28,7 @@
     <span
       on:click={e => onClickCell(e, header)}
       class:align-center={true}
+      class:has-child={row.children.length > 0}
       class:slice={true}
       {...header}>
       <span class="content">
@@ -33,7 +38,7 @@
   {/each}
 </div>
 
-{#if row.expanded && row.children}
+{#if row.expanded}
   {#each row.children as child (child)}
     <svelte:self
       bind:row={child}

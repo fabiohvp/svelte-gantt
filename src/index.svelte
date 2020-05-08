@@ -9,7 +9,6 @@
   import HeaderColumns from "./HeaderColumns.svelte";
   import HeaderGroup from "./HeaderGroup.svelte";
   import HeaderRow from "./HeaderRow.svelte";
-  import Item from "./Item.svelte";
 
   export let endTime;
   export let formatHeader = (s, e, z) => s;
@@ -262,6 +261,12 @@
     }
     return undefined;
   }
+
+  let headerGroupLoaded = false;
+  function loadHeaderGroup() {
+    headerGroupLoaded = true;
+    return "";
+  }
 </script>
 
 <svelte:window on:resize={onResize} />
@@ -290,7 +295,7 @@
       class="header-top-group sticky"
       use:scroll={{ slider, directions: ['x'] }}>
       <div class="header-top">
-        {#if rowsContainer}
+        {#if headerGroupLoaded}
           <HeaderGroup {getCoordinates} {getHeader} {slices} {zoom} />
         {/if}
       </div>
@@ -300,23 +305,19 @@
     </div>
     <div
       bind:this={rowsContainer}
-      class="rows relative"
+      class="rows"
       use:scroll={{ slider, directions: ['y'] }}>
-      {#each rows as row, index (row)}
-        <BodyRow {index} bind:row {slices} />
-      {/each}
-
       {#if rowsContainer}
         {#each rows as row, index (row)}
-          <Item
+          <BodyRow
             {index}
+            bind:row
+            {slices}
             {getCoordinates}
             {getRelativeDate}
-            {row}
-            {slices}
-            {zoom}
-            on:click={onClickItem} />
+            {zoom} />
         {/each}
+        {loadHeaderGroup()}
       {/if}
     </div>
   </div>
