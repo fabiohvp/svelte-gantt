@@ -40,9 +40,6 @@ export default {
 	},
 	offset: (el) => {
 		const rect = el.getBoundingClientRect();
-		const scrollLeft =
-			window.pageXOffset || document.documentElement.scrollLeft;
-		const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 		const computedStyle = window.getComputedStyle(el);
 		const borderTop = convertPixelToInt(computedStyle["border-top-width"]);
 		const borderLeft = convertPixelToInt(computedStyle["border-left-width"]);
@@ -52,10 +49,10 @@ export default {
 		const borderRight = convertPixelToInt(computedStyle["border-right-width"]);
 
 		return {
-			top: rect.top + scrollTop - borderTop,
-			left: rect.left + scrollLeft - borderLeft,
-			bottom: rect.bottom + scrollTop - borderBottom,
-			right: rect.right + scrollLeft - borderRight,
+			top: el.offsetTop + borderTop,
+			left: el.offsetLeft + borderLeft,
+			bottom: el.offsetTop + rect.height - borderBottom,
+			right: el.offsetLeft + rect.width - borderRight,
 		};
 	},
 };

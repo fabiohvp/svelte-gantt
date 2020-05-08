@@ -1,20 +1,31 @@
-export default function scroll(node, slider) {
+export default function scroll(node, { slider, directions }) {
+	let propertyX = "scrollLeft";
+	let propertyY = "scrollTop";
+	let curXPos = 0;
+	let curYPos = 0;
+	let curDown = false;
+
+	const _directions = {
+		x: (e) => slider.scrollTo(slider[propertyX] + (curXPos - e.pageX), slider[propertyY]),
+		y: (e) => slider.scrollTo(slider[propertyX], slider[propertyY] + (curYPos - e.pageY))
+	}
+
 	if (!slider) {
+		propertyX = "scrollX";
+		propertyY = "scrollY";
 		slider = window;
 	}
 
-	var curXPos = 0,
-		curDown = false;
-
 	function onMouseMove(e) {
 		if (curDown === true) {
-			slider.scrollTo(slider.scrollX + (curXPos - e.pageX), slider.scrollY);
+			directions.forEach(d => _directions[d](e));
 		}
 	}
 
 	function onMouseDown(e) {
 		curDown = true;
 		curXPos = e.pageX;
+		curYPos = e.pageY;
 	}
 
 	function onMouseEnd(e) {

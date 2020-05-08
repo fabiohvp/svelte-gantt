@@ -12,6 +12,11 @@
 		/* if you don't want to use window scroll */
 		/* #wrapper {
 			overflow-x: scroll;
+			position: relative;
+			margin-left: 20px;
+			margin-top: 20px;
+			width: 800px;
+			height: 150px;
 		} */
 
 		.svelte-gantt {
@@ -22,14 +27,22 @@
 			min-width: 100%;
 		}
 
+		.svelte-gantt .relative {
+			position: relative;
+		}
+
 		.svelte-gantt .absolute {
 			position: absolute;
 		}
 
+		.svelte-gantt .sticky {
+			position: sticky;
+		}
+
 		.svelte-gantt .header-side-group {
+			background-color: #f9fafb;
 			flex: none;
 			height: 100%;
-			position: sticky;
 			left: 0;
 			z-index: 2;
 		}
@@ -40,19 +53,22 @@
 			height: 100%;
 		}
 
+		.svelte-gantt .header-top-group {
+			top: 0;
+			background-color: #f9fafb;
+			z-index: 1;
+		}
+
 		.svelte-gantt .header-side {
 			height: 5em;
-			position: sticky;
 			top: 0;
-			background-color: white;
 		}
 
 		.svelte-gantt .header-side-column {
-			background-color: white;
+			overflow: hidden;
 		}
 
-		.svelte-gantt .body-slices .slice,
-		.svelte-gantt .header-slices .slice {
+		.svelte-gantt .flex {
 			flex: 1;
 		}
 
@@ -66,7 +82,7 @@
 			border-top: 1px solid #eee;
 		}
 
-		.svelte-gantt .header-group {
+		.svelte-gantt .header-top {
 			display: flex;
 			position: sticky;
 			height: 2.5em;
@@ -79,7 +95,6 @@
 			position: sticky;
 			height: 2.5em;
 			top: 2.5em;
-			z-index: 1;
 		}
 
 		.svelte-gantt .body-slices {
@@ -88,13 +103,11 @@
 		}
 
 		.svelte-gantt .row-height {
-			height: 10em;
+			height: 3em;
 		}
 
 		.svelte-gantt .item {
 			display: none;
-			margin-top: 1px;
-			/* compensate border */
 		}
 
 		.svelte-gantt .content {
@@ -119,12 +132,6 @@
 			user-select: none;
 		}
 
-		.svelte-gantt .header-side,
-		.svelte-gantt .header-group,
-		.svelte-gantt .header-slices {
-			background-color: #f9fafb;
-		}
-
 		/* testes */
 		body {
 			margin: 0 0;
@@ -145,9 +152,9 @@
 </head>
 
 <body>
-	<!-- <div id="wrapper" style="margin-left: 20px; margin-top: 20px; width: 800px;"> -->
-	<div id="teste"></div>
-	<!-- </div> -->
+	<div id="wrapper">
+		<div id="teste"></div>
+	</div>
 </body>
 
 <script type="module" src="./index.js"></script>
@@ -279,7 +286,7 @@
 			startTime,
 			endTime,
 			headers: getHeaders(),
-			// slider: document.getElementById("wrapper"),
+			//slider: document.getElementById("wrapper"),
 			rows,
 			zoom: "day",
 		},

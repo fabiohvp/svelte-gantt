@@ -197,8 +197,8 @@
   export let zoom;
 
   const dispatch = createEventDispatcher();
-  let container;
   let resizeCount = 0;
+  let rowsContainer;
   let window;
 
   $: updateSlices(slices, resizeCount, zoom);
@@ -238,18 +238,18 @@
     const startTimeRelative = getRelativeDate[zoom](startTime);
     const endTimeRelative = getRelativeDate[zoom](endTime);
 
-    const startCell = container.querySelector(
+    const startCell = rowsContainer.querySelector(
       `.slice[coords="${index},${index2}"][starttime="${startTimeRelative}"]`
     );
-    const endCell = container.querySelector(
+    const endCell = rowsContainer.querySelector(
       `.slice[coords="${index},${index2}"][starttime="${endTimeRelative}"]`
     );
 
     if (startCell && endCell) {
       const startCoords = utils.offset(startCell);
       const endCoords = utils.offset(endCell);
-      const top = startCoords.top /*- container.offsetTop*/;
-      const left = startCoords.left /*- container.offsetLeft*/;
+      const top = startCoords.top;
+      const left = startCoords.left;
 
       return {
         startCell,
@@ -266,8 +266,8 @@
 
 <svelte:window on:resize={onResize} />
 
-<div bind:this={container} class="svelte-gantt">
-  <div class="header-side-group">
+<div class="svelte-gantt">
+  <div class="header-side-group sticky">
     <div class="header-side align-center">
       {#each headers as header}
         <div
@@ -285,30 +285,39 @@
       <HeaderColumns headers={row.headers} bind:row on:click={onClickHeader} />
     {/each}
   </div>
-  <div style="flex: 1;">
-    <div class="header-group noselect" use:scroll={slider}>
-      {#if container}
-        <HeaderGroup {getCoordinates} {getHeader} {slices} {zoom} />
+  <div class="flex noselect">
+    <div
+      class="header-top-group sticky"
+      use:scroll={{ slider, directions: ['x'] }}>
+      <div class="header-top">
+        {#if rowsContainer}
+          <HeaderGroup {getCoordinates} {getHeader} {slices} {zoom} />
+        {/if}
+      </div>
+      <div class="header-slices">
+        <HeaderRow {slices} />
+      </div>
+    </div>
+    <div
+      bind:this={rowsContainer}
+      class="rows relative"
+      use:scroll={{ slider, directions: ['y'] }}>
+      {#each rows as row, index (row)}
+        <BodyRow {index} bind:row {slices} />
+      {/each}
+
+      {#if rowsContainer}
+        {#each rows as row, index (row)}
+          <Item
+            {index}
+            {getCoordinates}
+            {getRelativeDate}
+            {row}
+            {slices}
+            {zoom}
+            on:click={onClickItem} />
+        {/each}
       {/if}
     </div>
-    <div class="header-slices">
-      <HeaderRow {slices} />
-    </div>
-    {#each rows as row, index (row)}
-      <BodyRow {index} bind:row {slices} />
-    {/each}
   </div>
-
-  {#if container}
-    {#each rows as row, index (row)}
-      <Item
-        {index}
-        {getCoordinates}
-        {getRelativeDate}
-        {row}
-        {slices}
-        {zoom}
-        on:click={onClickItem} />
-    {/each}
-  {/if}
 </div>

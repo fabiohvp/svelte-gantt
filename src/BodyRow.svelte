@@ -17,7 +17,7 @@
   }
 </script>
 
-<div class="body-slices noselect">
+<div class="body-slices noselect row-height">
   {#each slices as _slice (_slice)}
     <Slice
       coords={`${index},${index2}`}

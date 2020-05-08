@@ -28,8 +28,8 @@
 {#each getHeader[zoom](slices) as item (item)}
   <span
     on:click={e => onClick(e, item)}
-    class:slice={true}
     class:align-center={true}
+    class:slice={true}
     startTime={item.startTime}
     endTime={item.endTime}
     style={getStyle(item)}
