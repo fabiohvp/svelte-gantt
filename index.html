@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-    <title>Svelte app</title>
-    <link rel="stylesheet" href="./index.css" />
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
 
-    <style>
-      /* if you don't want to use window scroll */
-      /* #wrapper {
+	<title>Svelte app</title>
+	<link rel="stylesheet" href="./index.css" />
+
+	<style>
+		/* if you don't want to use window scroll */
+		/* #wrapper {
         overflow-x: scroll;
         position: relative;
         margin-left: 20px;
@@ -18,434 +19,433 @@
         height: 300px;
       } */
 
-      .svelte-gantt {
-        font-size: 14px;
-        position: relative;
-        display: flex;
-        width: max-content;
-        min-width: 100%;
-      }
+		.svelte-gantt {
+			font-size: 14px;
+			position: relative;
+			display: flex;
+			width: max-content;
+			min-width: 100%;
+		}
 
-      .svelte-gantt .relative {
-        position: relative;
-      }
+		.svelte-gantt .relative {
+			position: relative;
+		}
 
-      .svelte-gantt .absolute {
-        position: absolute;
-      }
+		.svelte-gantt .absolute {
+			position: absolute;
+		}
 
-      .svelte-gantt .sticky {
-        position: sticky;
-      }
+		.svelte-gantt .sticky {
+			position: sticky;
+		}
 
-      .svelte-gantt .header-side-group {
-        background-color: #f9fafb;
-        flex: none;
-        height: 100%;
-        left: 0;
-        z-index: 2;
-      }
+		.svelte-gantt .header-side-group {
+			background-color: #f9fafb;
+			flex: none;
+			height: 100%;
+			left: 0;
+			z-index: 2;
+		}
 
-      .svelte-gantt .header-side-group .slice {
-        float: left;
-        width: 100px;
-        height: 100%;
-      }
+		.svelte-gantt .header-side-group .slice {
+			float: left;
+			width: 100px;
+			height: 100%;
+		}
 
-      .svelte-gantt .header-top-group {
-        top: 0;
-        background-color: #f9fafb;
-        z-index: 1;
-      }
+		.svelte-gantt .header-top-group {
+			top: 0;
+			background-color: #f9fafb;
+			z-index: 1;
+		}
 
-      .svelte-gantt .header-side {
-        height: 5em;
-        top: 0;
-      }
+		.svelte-gantt .header-side {
+			height: 5em;
+			top: 0;
+		}
 
-      .svelte-gantt .header-side-column {
-        overflow: hidden;
-      }
+		.svelte-gantt .header-side-column {
+			overflow: hidden;
+		}
 
-      .svelte-gantt .flex {
-        flex: 1;
-      }
+		.svelte-gantt .flex {
+			flex: 1;
+		}
 
-      .svelte-gantt .align-center {
-        display: flex;
-        align-items: center;
-      }
+		.svelte-gantt .align-center {
+			display: flex;
+			align-items: center;
+		}
 
-      .svelte-gantt .slice {
-        overflow: hidden;
-        border-right: 1px solid #eee;
-        border-top: 1px solid #eee;
-      }
+		.svelte-gantt .slice {
+			overflow: hidden;
+			border-right: 1px solid #eee;
+			border-top: 1px solid #eee;
+		}
 
-      .svelte-gantt .header-top {
-        display: flex;
-        position: sticky;
-        height: 2.5em;
-        top: 0;
-        z-index: 1;
-      }
+		.svelte-gantt .header-top {
+			display: flex;
+			position: sticky;
+			height: 2.5em;
+			top: 0;
+			z-index: 1;
+		}
 
-      .svelte-gantt .header-slices {
-        display: flex;
-        position: sticky;
-        height: 2.5em;
-        top: 2.5em;
-      }
+		.svelte-gantt .header-slices {
+			display: flex;
+			position: sticky;
+			height: 2.5em;
+			top: 2.5em;
+		}
 
-      .svelte-gantt .body-slices {
-        display: flex;
-        min-width: min-content;
-      }
+		.svelte-gantt .body-slices {
+			display: flex;
+			min-width: min-content;
+		}
 
-      .svelte-gantt .row-height {
-        height: 3em;
-      }
+		.svelte-gantt .row-height {
+			height: 3em;
+		}
 
-      .svelte-gantt .item {
-        display: none;
-      }
+		.svelte-gantt .item {
+			display: none;
+		}
 
-      .svelte-gantt .content {
-        padding: 0.4em;
-      }
+		.svelte-gantt .content {
+			padding: 0.4em;
+		}
 
-      .svelte-gantt .item > .content {
-        background-color: rgba(0, 119, 192, 0.5);
-        border-radius: 1em;
-        cursor: pointer;
-        overflow: hidden;
-        opacity: 0.6;
-        margin: 0.4em;
-        width: 100%;
-      }
+		.svelte-gantt .item>.content {
+			background-color: rgba(0, 119, 192, 0.5);
+			border-radius: 1em;
+			cursor: pointer;
+			overflow: hidden;
+			opacity: 0.6;
+			margin: 0.4em;
+			width: 100%;
+		}
 
-      .svelte-gantt .noselect {
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-      }
+		.svelte-gantt .noselect {
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+		}
 
-      /* testes */
-      body {
-        margin: 0 0;
-      }
+		/* testes */
+		body {
+			margin: 0 0;
+		}
 
-      .teste3 {
-        background-color: red;
-      }
+		.teste3 {
+			background-color: red;
+		}
 
-      .today {
-        background-color: #f1c40f1a;
-      }
+		.today {
+			background-color: #f1c40f1a;
+		}
 
-      .weekend {
-        background-color: #f9fafb;
-      }
+		.weekend {
+			background-color: #f9fafb;
+		}
 
-      .svelte-gantt .item.odd > .content {
-        background-color: green;
-      }
+		.svelte-gantt .item.odd>.content {
+			background-color: green;
+		}
 
-      .svelte-gantt .has-child {
-        background-color: red;
-      }
-    </style>
-  </head>
+		.svelte-gantt .has-child {
+			background-color: red;
+		}
+	</style>
+</head>
 
-  <body>
-    <div id="wrapper">
-      <div id="teste"></div>
-    </div>
-  </body>
+<body>
+	<div id="wrapper">
+		<div id="teste"></div>
+	</div>
+</body>
 
-  <script type="module" src="./index.js"></script>
-  <script type="module">
-    import utils from "./src/utils.js";
+<script type="module" src="./index.js"></script>
+<script type="module">
+	import utils from "./src/utils.js";
 
-    const rowsCount = 1;
-    const padding = 2;
-    const today = new Date();
+	const rowsCount = 5;
+	const padding = 120;
+	const today = new Date();
 
-    let startTime = utils.addDays(today, -padding);
-    startTime.setHours(0, 0, 0, 0);
-    startTime = startTime.getTime();
+	let startTime = utils.addDays(today, -padding);
+	startTime.setHours(0, 0, 0, 0);
+	startTime = startTime.getTime();
 
-    let endTime = utils.addDays(today, padding);
-    endTime.setHours(0, 0, 0, 0);
-    endTime = endTime.getTime();
+	let endTime = utils.addDays(today, padding);
+	endTime.setHours(0, 0, 0, 0);
+	endTime = endTime.getTime();
 
-    let rows = [];
+	let rows = [];
 
-    for (let i = 0; i < rowsCount; i++) {
-      rows.push(getRow(i, i.toString()));
-    }
+	for (let i = 0; i < rowsCount; i++) {
+		rows.push(getRow(i, i.toString()));
+	}
 
-    console.log(rows);
+	const gantt = new Gantt({
+		target: document.getElementById("teste"),
+		props: {
+			formatHeader,
+			formatSlice,
+			startTime,
+			endTime,
+			headers: getHeaders(),
+			//slider: document.getElementById("wrapper"),
+			rows,
+			zoom: "day",
+		},
+	});
 
-    const gantt = new Gantt({
-      target: document.getElementById("teste"),
-      props: {
-        formatHeader,
-        formatSlice,
-        startTime,
-        endTime,
-        headers: getHeaders(),
-        //slider: document.getElementById("wrapper"),
-        rows,
-        zoom: "hour",
-      },
-    });
+	gantt.$on("click.header", console.log);
+	gantt.$on("click.item", console.log);
+	gantt.$on("click.row", console.log);
 
-    gantt.$on("click.header", console.log);
-    gantt.$on("click.item", console.log);
-    gantt.$on("click.row", console.log);
+	// setTimeout(() => {
+	//   gantt.$set({
+	//     zoom: "day",
+	//   });
+	//   gantt.$set({ rows });
+	// }, 2000);
 
-    // setTimeout(() => {
-    //   gantt.$set({
-    //     zoom: "day",
-    //   });
-    //   gantt.$set({ rows });
-    // }, 2000);
+	function formatHeader(item, zoom) {
+		const formatters = {
+			year: () => {
+				return {
+					...item,
+					content: `${item.startDate.getFullYear()}`,
+					title: item.startDate,
+				};
+			},
+			month: () => {
+				return {
+					...item,
+					content: `${item.startDate.getFullYear()}`,
+					title: item.startDate,
+				};
+			},
+			day: () => {
+				return {
+					...item,
+					content: `${item.startDate.getMonth() + 1} ${item.startDate.getFullYear()}`,
+					title: item.startDate,
+				};
+			},
+			hour: () => {
+				return {
+					...item,
+					content: `${item.startDate.getDate()} ${item.startDate.getMonth() + 1} ${item.startDate.getFullYear()}`,
+					title: item.startDate,
+				};
+			},
+		};
 
-    function formatHeader(item, zoom) {
-      const formatters = {
-        year: () => {
-          return {
-            ...item,
-            content: `${item.startDate.getFullYear()}`,
-            title: item.startDate,
-          };
-        },
-        month: () => {
-          return {
-            ...item,
-            content: `${item.startDate.getFullYear()}`,
-            title: item.startDate,
-          };
-        },
-        day: () => {
-          return {
-            ...item,
-            content: `${item.startDate.getMonth()} ${item.startDate.getFullYear()}`,
-            title: item.startDate,
-          };
-        },
-        hour: () => {
-          return {
-            ...item,
-            content: `${item.startDate.getDate()} ${item.startDate.getMonth()} ${item.startDate.getFullYear()}`,
-            title: item.startDate,
-          };
-        },
-      };
+		return formatters[zoom]();
+	}
 
-      return formatters[zoom]();
-    }
+	function formatSlice(slice, zoom) {
+		const day = slice.startDate.getDay();
+		const isWeekend = day === 6 || day === 0;
+		const todayTime = today.getTime();
+		const isToday =
+			todayTime >= slice.startTime && todayTime <= slice.endTime;
 
-    function formatSlice(slice, zoom) {
-      const day = new Date(slice.startTime).getDay();
-      const isWeekend = day === 6 || day === 0;
-      const todayTime = today.getTime();
-      const isToday =
-        todayTime >= slice.startTime && todayTime <= slice.endTime;
+		const classes = [];
 
-      const classes = [];
+		if (isWeekend) {
+			classes.push("weekend");
+		}
+		if (isToday) {
+			classes.push("today");
+		}
 
-      if (isWeekend) {
-        classes.push("weekend");
-      }
-      if (isToday) {
-        classes.push("today");
-      }
+		const formatter = {
+			year: function () {
+				return {
+					...slice,
+					header: {
+						...slice.header,
+						content: slice.startDate.getFullYear(),
+						title: slice.startDate,
+					},
+					body: {
+						...slice.body,
+						title: slice.startDate,
+						class: classes.join(" "),
+					},
+				};
+			},
+			month: function () {
+				return {
+					...slice,
+					header: {
+						...slice.header,
+						content: (slice.startDate.getMonth() + 1)
+							.toString()
+							.padStart(2, "0"),
+						title: slice.startDate,
+					},
+					body: {
+						...slice.body,
+						title: slice.startDate,
+						class: classes.join(" "),
+					},
+				};
+			},
+			day: function () {
+				return {
+					...slice,
+					header: {
+						...slice.header,
+						content: slice.startDate.getDate().toString().padStart(2, "0"),
+						title: slice.startDate,
+					},
+					body: {
+						...slice.body,
+						title: slice.startDate,
+						class: classes.join(" "),
+					},
+				};
+			},
+			hour: function () {
+				return {
+					...slice,
+					header: {
+						...slice.header,
+						content: slice.startDate.getHours().toString().padStart(2, "0"),
+						title: slice.startDate,
+					},
+					body: {
+						...slice.body,
+						title: slice.startDate,
+						class: classes.join(" "),
+					},
+				};
+			},
+		};
 
-      const formatter = {
-        year: function () {
-          return {
-            ...slice,
-            header: {
-              ...slice.header,
-              content: slice.startDate.getFullYear(),
-              title: slice.startDate,
-            },
-            body: {
-              ...slice.body,
-              title: slice.startDate,
-              class: classes.join(" "),
-            },
-          };
-        },
-        month: function () {
-          return {
-            ...slice,
-            header: {
-              ...slice.header,
-              content: (slice.startDate.getMonth() + 1)
-                .toString()
-                .padStart(2, "0"),
-              title: slice.startDate,
-            },
-            body: {
-              ...slice.body,
-              title: slice.startDate,
-              class: classes.join(" "),
-            },
-          };
-        },
-        day: function () {
-          return {
-            ...slice,
-            header: {
-              ...slice.header,
-              content: slice.startDate.getDate().toString().padStart(2, "0"),
-              title: slice.startDate,
-            },
-            body: {
-              ...slice.body,
-              title: slice.startDate,
-              class: classes.join(" "),
-            },
-          };
-        },
-        hour: function () {
-          return {
-            ...slice,
-            header: {
-              ...slice.header,
-              content: slice.startDate.getHours().toString().padStart(2, "0"),
-              title: slice.startDate,
-            },
-            body: {
-              ...slice.body,
-              title: slice.startDate,
-              class: classes.join(" "),
-            },
-          };
-        },
-      };
+		return formatter[zoom]();
+	}
 
-      return formatter[zoom]();
-    }
+	function getHeaders() {
+		const monthNames = [
+			"January",
+			"February",
+			"March",
+			"April",
+			"May",
+			"June",
+			"July",
+			"August",
+			"September",
+			"October",
+			"November",
+			"December",
+		];
 
-    function getHeaders() {
-      const monthNames = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ];
+		return [
+			{
+				content: "nome",
+			},
+			// {
+			//   content: "nome2",
+			// },
+		];
+	}
 
-      return [
-        {
-          content: "nome",
-        },
-        // {
-        //   content: "nome2",
-        // },
-      ];
-    }
+	function getRandomDateRange() {
+		const getHours = (timespan) => {
+			return timespan / 1000 / 60 / 60;
+		};
 
-    function getRandomDateRange() {
-      const getHours = (timespan) => {
-        return timespan / 1000 / 60 / 60;
-      };
+		let diff = endTime - startTime;
+		let start = Math.floor(Math.random() * diff) + 1;
+		diff = endTime - startTime - start;
+		const end = getHours(Math.floor(Math.random() * diff));
+		start = getHours(start);
 
-      let diff = endTime - startTime;
-      let start = Math.floor(Math.random() * diff) + 1;
-      diff = endTime - startTime - start;
-      const end = getHours(Math.floor(Math.random() * diff));
-      start = getHours(start);
+		return {
+			startTime: utils.addHours(startTime, start),
+			endTime: utils.addHours(startTime, start + end),
+		};
+	}
 
-      return {
-        startTime: utils.addHours(startTime, start),
-        endTime: utils.addHours(startTime, start + end),
-      };
-    }
+	function getRandomItems(i) {
+		const items = [];
+		const numberOfItems = Math.floor(Math.random() * 2) + 1; //1 a 5
 
-    function getRandomItems(i) {
-      const items = [];
-      const numberOfItems = Math.floor(Math.random() * 2) + 1; //1 a 5
+		for (let j = 0; j < numberOfItems; j++) {
+			const randomRange = getRandomDateRange();
 
-      for (let j = 0; j < numberOfItems; j++) {
-        const randomRange = getRandomDateRange();
+			items.push({
+				content: `Item ${i} - ${j}`,
+				title: `Item ${i} - ${j}`,
+				class: i % 2 ? "even" : "odd",
+				startTime: randomRange.startTime,
+				endTime: randomRange.endTime,
+			});
+		}
+		return items;
+	}
 
-        items.push({
-          content: `Item ${i} - ${j}`,
-          title: `Item ${i} - ${j}`,
-          class: i % 2 ? "even" : "odd",
-          startTime: randomRange.startTime,
-          endTime: randomRange.endTime,
-        });
-      }
-      return items;
-    }
+	function getRandomChildrens(i, id) {
+		const childrens = [];
+		if (id.length > 4) {
+			return childrens;
+		}
 
-    function getRandomChildrens(i, id) {
-      const childrens = [];
-      if (id.length > 4) {
-        return childrens;
-      }
+		const numberOfChildren = i % 2 ? Math.floor(Math.random() * 3) + 1 : 0;
 
-      const numberOfChildren = i % 2 ? Math.floor(Math.random() * 3) + 1 : 0;
+		for (let j = 0; j < numberOfChildren; j++) {
+			childrens.push(getRow(j, id + "-" + j));
+		}
+		return childrens;
+	}
 
-      for (let j = 0; j < numberOfChildren; j++) {
-        childrens.push(getRow(j, id + "-" + j));
-      }
-      return childrens;
-    }
+	function getRow(i, id) {
+		return {
+			headers: [
+				{
+					title: `Row ${id}`,
+					content: `Row ${id}`,
+				},
+			],
+			items: getRandomItems(i),
+			expanded: false,
+			children: getRandomChildrens(i, i.toString()),
+		};
+	}
 
-    function getRow(i, id) {
-      return {
-        headers: [
-          {
-            title: `Row ${id}`,
-            content: `Row ${id}`,
-          },
-        ],
-        items: getRandomItems(i),
-        expanded: false,
-        children: getRandomChildrens(i, i.toString()),
-      };
-    }
+	function getGroupsDays(columns) {
+		const groups = [];
+		let currentGroup;
+		let currentMonth = -1;
 
-    function getGroupsDays(columns) {
-      const groups = [];
-      let currentGroup;
-      let currentMonth = -1;
+		columns.forEach((column) => {
+			const month = column.date.getMonth();
 
-      columns.forEach((column) => {
-        const month = column.date.getMonth();
+			if (month !== currentMonth) {
+				currentGroup = {
+					colspan: 1,
+					month,
+					date: column.date,
+				};
 
-        if (month !== currentMonth) {
-          currentGroup = {
-            colspan: 1,
-            month,
-            date: column.date,
-          };
+				groups.push(currentGroup);
+				currentMonth = month;
+			} else {
+				currentGroup.colspan++;
+			}
+		});
 
-          groups.push(currentGroup);
-          currentMonth = month;
-        } else {
-          currentGroup.colspan++;
-        }
-      });
+		return groups;
+	}
+</script>
 
-      return groups;
-    }
-  </script>
 </html>
