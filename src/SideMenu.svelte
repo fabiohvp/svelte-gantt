@@ -13,12 +13,12 @@
     dispatch("click", {
       event: e,
       header,
-      type: "static"
+      row,
+      type: "sideMenu",
     });
   }
 
   function onClickChildren(e) {
-    console.log("pq1p");
     dispatch("click", e.detail);
   }
 </script>
@@ -26,7 +26,7 @@
 <div class="row-height header-side-column">
   {#each headers as header}
     <span
-      on:click={e => onClickCell(e, header)}
+      on:click={(e) => onClickCell(e, header)}
       class:align-center={true}
       class:has-child={row.children.length > 0}
       class:slice={true}
@@ -43,6 +43,6 @@
     <svelte:self
       bind:row={child}
       headers={child.headers}
-      on:click={e => onClickChildren(e)} />
+      on:click={onClickChildren} />
   {/each}
 {/if}

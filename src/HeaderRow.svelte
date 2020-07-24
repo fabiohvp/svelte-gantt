@@ -4,16 +4,13 @@
   export let slices;
 
   const dispatch = createEventDispatcher();
+  const type = "header";
 
   function onClick(e, slice) {
-    dispatch("click", {
-      event: e,
-      slice,
-      type: "cell"
-    });
+    dispatch("click", e.detail);
   }
 </script>
 
 {#each slices as slice (slice)}
-  <Slice {slice} type="header" on:click={onClick} />
+  <Slice {slice} {type} on:click={onClick} />
 {/each}

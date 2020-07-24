@@ -3,7 +3,6 @@
   import Item from "./Item.svelte";
   import Slice from "./Slice.svelte";
   export let index;
-  export let index2 = 0;
   export let row;
   export let slices;
 
@@ -13,27 +12,15 @@
 
   const dispatch = createEventDispatcher();
 
-  function onClickCell(e) {
-    dispatch("click", e.detail);
-  }
-
-  function onClickChildren(e) {
-    dispatch("click", e.detail);
-  }
-
-  function onClickItem(e) {
+  function onClick(e) {
     dispatch("click", e.detail);
   }
 </script>
 
 <div class="row relative">
-  <div class="body-slices noselect row-height">
+  <div class="body-slices row-height">
     {#each slices as _slice (_slice)}
-      <Slice
-        coords={`${index},${index2}`}
-        slice={_slice}
-        type="body"
-        on:click={onClickCell} />
+      <Slice {index} slice={_slice} type="body" on:click={onClick} />
     {/each}
   </div>
   <Item
@@ -43,19 +30,18 @@
     {row}
     {slices}
     {zoom}
-    on:click={onClickItem} />
+    on:click={onClick} />
 </div>
 
 {#if row.expanded && row.children}
   {#each row.children as child, index2}
     <svelte:self
-      {index}
-      index2={index2 + 1}
+      index={index + '-' + index2}
       bind:row={child}
       {slices}
       {getCoordinates}
       {getRelativeDate}
       {zoom}
-      on:click={e => onClickChildren(e)} />
+      on:click={onClick} />
   {/each}
 {/if}

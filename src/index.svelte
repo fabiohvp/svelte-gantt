@@ -6,7 +6,7 @@
   //   import Row from "./Row.svelte";
   //   import Rows from "./Rows.svelte";
   import BodyRow from "./BodyRow.svelte";
-  import HeaderColumns from "./HeaderColumns.svelte";
+  import SideMenu from "./SideMenu.svelte";
   import HeaderGroup from "./HeaderGroup.svelte";
   import HeaderRow from "./HeaderRow.svelte";
 
@@ -14,29 +14,29 @@
   export let formatHeader = (s, e, z) => s;
   export let formatSlice = (s, z) => s;
   export let getRelativeDate = {
-    year: date => {
+    year: (date) => {
       let newDate = new Date(date);
       newDate = new Date(newDate.getFullYear(), 0, 1);
       return newDate.getTime();
     },
-    month: date => {
+    month: (date) => {
       let newDate = new Date(date);
       newDate = new Date(newDate.getFullYear(), newDate.getMonth(), 1);
       return newDate.getTime();
     },
-    day: date => {
+    day: (date) => {
       let newDate = new Date(date);
       newDate.setHours(0, 0, 0, 0);
       return newDate.getTime();
     },
-    hour: date => {
+    hour: (date) => {
       let newDate = new Date(date);
       return newDate.getTime();
-    }
+    },
   };
   export let getHeader = {
-    year: slices => {
-      const groups = utils.groupBy(slices, slice =>
+    year: (slices) => {
+      const groups = utils.groupBy(slices, (slice) =>
         slice.startDate.getFullYear()
       );
       const items = [];
@@ -48,14 +48,14 @@
           startDate: first.startDate,
           startTime: first.startTime,
           endDate: last.startDate,
-          endTime: last.startTime
+          endTime: last.startTime,
         };
         items.push(formatHeader(item, zoom));
       }
       return items;
     },
-    month: slices => {
-      const groups = utils.groupBy(slices, slice =>
+    month: (slices) => {
+      const groups = utils.groupBy(slices, (slice) =>
         slice.startDate.getFullYear()
       );
       const items = [];
@@ -67,16 +67,16 @@
           startDate: first.startDate,
           startTime: first.startTime,
           endDate: last.startDate,
-          endTime: last.startTime
+          endTime: last.startTime,
         };
         items.push(formatHeader(item, zoom));
       }
       return items;
     },
-    day: slices => {
+    day: (slices) => {
       const groups = utils.groupBy(
         slices,
-        slice =>
+        (slice) =>
           `${slice.startDate.getFullYear()}-${slice.startDate.getMonth()}`
       );
       const items = [];
@@ -88,14 +88,16 @@
           startDate: first.startDate,
           startTime: first.startTime,
           endDate: last.startDate,
-          endTime: last.startTime
+          endTime: last.startTime,
         };
         items.push(formatHeader(item, zoom));
       }
       return items;
     },
-    hour: slices => {
-      const groups = utils.groupBy(slices, slice => slice.startDate.getDate());
+    hour: (slices) => {
+      const groups = utils.groupBy(slices, (slice) =>
+        slice.startDate.getDate()
+      );
       const items = [];
 
       for (let i in groups) {
@@ -105,12 +107,12 @@
           startDate: first.startDate,
           startTime: first.startTime,
           endDate: last.startDate,
-          endTime: last.startTime
+          endTime: last.startTime,
         };
         items.push(formatHeader(item, zoom));
       }
       return items;
-    }
+    },
   };
   export let getSlices = {
     year: (startTime, endTime) => {
@@ -186,7 +188,7 @@
         date = current;
       }
       return _slices;
-    }
+    },
   };
   export let headers;
   export let rows;
@@ -196,6 +198,7 @@
   export let zoom;
 
   const dispatch = createEventDispatcher();
+  let headerGroupLoaded = false;
   let resizeCount = 0;
   let rowsContainer;
   let window;
@@ -213,35 +216,32 @@
       endDate: endDate,
       endTime: endDate.getTime(),
       body: {},
-      header: {}
+      header: {},
     };
   }
 
-  function onClickHeader(e) {
-    dispatch("click.header", e.detail);
+  function loadHeaderGroup() {
+    headerGroupLoaded = true;
+    return "";
   }
 
-  function onClickItem(e) {
-    dispatch("click.item", e.detail);
-  }
-
-  function onClickRow(e) {
-    dispatch("click.row", e.detail);
+  function onClick(e) {
+    dispatch("click", e.detail);
   }
 
   function onResize(e) {
     resizeCount++;
   }
 
-  export function getCoordinates(index, index2, startTime, endTime) {
+  export function getCoordinates(index, startTime, endTime) {
     const startTimeRelative = getRelativeDate[zoom](startTime);
     const endTimeRelative = getRelativeDate[zoom](endTime);
 
     const startCell = rowsContainer.querySelector(
-      `.slice[coords="${index},${index2}"][starttime="${startTimeRelative}"]`
+      `.slice[index="${index}"][starttime="${startTimeRelative}"]`
     );
     const endCell = rowsContainer.querySelector(
-      `.slice[coords="${index},${index2}"][starttime="${endTimeRelative}"]`
+      `.slice[index="${index}"][starttime="${endTimeRelative}"]`
     );
 
     if (startCell && endCell) {
@@ -256,18 +256,18 @@
         top,
         left,
         height: startCoords.bottom - top,
-        width: endCoords.right - left
+        width: endCoords.right - left,
       };
     }
     return undefined;
   }
-
-  let headerGroupLoaded = false;
-  function loadHeaderGroup() {
-    headerGroupLoaded = true;
-    return "";
-  }
 </script>
+
+<style>
+  .header-top-group {
+    cursor: ew-resize;
+  }
+</style>
 
 <svelte:window on:resize={onResize} />
 
@@ -276,7 +276,10 @@
     <div class="header-side align-center">
       {#each headers as header}
         <div
-          on:click={e => onClickHeader(e)}
+          on:click={(e) => onClick({
+              e,
+              detail: { header, type: 'menuHeader' },
+            })}
           class:align-center={true}
           class:slice={true}
           {...header}>
@@ -287,20 +290,25 @@
       {/each}
     </div>
     {#each rows as row, index (row)}
-      <HeaderColumns headers={row.headers} bind:row on:click={onClickHeader} />
+      <SideMenu headers={row.headers} bind:row on:click={onClick} />
     {/each}
   </div>
-  <div class="flex noselect">
+  <div class="flex">
     <div
-      class="header-top-group sticky"
+      class="header-top-group noselect sticky"
       use:scroll={{ slider, directions: ['x'] }}>
       <div class="header-top">
         {#if headerGroupLoaded}
-          <HeaderGroup {getCoordinates} {getHeader} {slices} {zoom} />
+          <HeaderGroup
+            {getCoordinates}
+            {getHeader}
+            {slices}
+            {zoom}
+            on:click={onClick} />
         {/if}
       </div>
       <div class="header-slices">
-        <HeaderRow {slices} />
+        <HeaderRow {slices} on:click={onClick} />
       </div>
     </div>
     <div
@@ -315,7 +323,8 @@
             {slices}
             {getCoordinates}
             {getRelativeDate}
-            {zoom} />
+            {zoom}
+            on:click={onClick} />
         {/each}
         {loadHeaderGroup()}
       {/if}

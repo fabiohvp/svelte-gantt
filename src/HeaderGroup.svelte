@@ -9,7 +9,7 @@
   const dispatch = createEventDispatcher();
 
   function getStyle(item) {
-    const coords = getCoordinates(0, 0, item.startTime, item.endTime);
+    const coords = getCoordinates(0, item.startTime, item.endTime);
     if (coords) {
       return `width:${coords.width}px;`;
     }
@@ -20,14 +20,14 @@
     dispatch("click", {
       event: e,
       item,
-      type: "group"
+      type: "header",
     });
   }
 </script>
 
 {#each getHeader[zoom](slices) as item (item)}
   <span
-    on:click={e => onClick(e, item)}
+    on:click={(e) => onClick(e, item)}
     class:align-center={true}
     class:slice={true}
     startTime={item.startTime}

@@ -172,7 +172,7 @@
 	import utils from "./src/utils.js";
 
 	const rowsCount = 5;
-	const padding = 120;
+	const padding = 10;
 	const today = new Date();
 
 	let startTime = utils.addDays(today, -padding);
@@ -203,9 +203,7 @@
 		},
 	});
 
-	gantt.$on("click.header", console.log);
-	gantt.$on("click.item", console.log);
-	gantt.$on("click.row", console.log);
+	gantt.$on("click", console.log);
 
 	// setTimeout(() => {
 	//   gantt.$set({
@@ -384,8 +382,8 @@
 			const randomRange = getRandomDateRange();
 
 			items.push({
-				content: `Item ${i} - ${j}`,
-				title: `Item ${i} - ${j}`,
+				content: `Item ${i}: ${j}`,
+				title: `Item ${i}: ${j}`,
 				class: i % 2 ? "even" : "odd",
 				startTime: randomRange.startTime,
 				endTime: randomRange.endTime,
@@ -416,7 +414,7 @@
 					content: `Row ${id}`,
 				},
 			],
-			items: getRandomItems(i),
+			items: getRandomItems(id),
 			expanded: false,
 			children: getRandomChildrens(i, i.toString()),
 		};
