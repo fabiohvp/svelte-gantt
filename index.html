@@ -192,14 +192,11 @@
 	const gantt = new Gantt({
 		target: document.getElementById("teste"),
 		props: {
-			formatHeader,
-			formatSlice,
 			startTime,
 			endTime,
-			headers: getHeaders(),
-			//slider: document.getElementById("wrapper"),
 			rows,
 			zoom: "day",
+			//slider: document.getElementById("wrapper"),
 		},
 	});
 
@@ -211,151 +208,6 @@
 	//   });
 	//   gantt.$set({ rows });
 	// }, 2000);
-
-	function formatHeader(item, zoom) {
-		const formatters = {
-			year: () => {
-				return {
-					...item,
-					content: `${item.startDate.getFullYear()}`,
-					title: item.startDate,
-				};
-			},
-			month: () => {
-				return {
-					...item,
-					content: `${item.startDate.getFullYear()}`,
-					title: item.startDate,
-				};
-			},
-			day: () => {
-				return {
-					...item,
-					content: `${item.startDate.getMonth() + 1} ${item.startDate.getFullYear()}`,
-					title: item.startDate,
-				};
-			},
-			hour: () => {
-				return {
-					...item,
-					content: `${item.startDate.getDate()} ${item.startDate.getMonth() + 1} ${item.startDate.getFullYear()}`,
-					title: item.startDate,
-				};
-			},
-		};
-
-		return formatters[zoom]();
-	}
-
-	function formatSlice(slice, zoom) {
-		const day = slice.startDate.getDay();
-		const isWeekend = day === 6 || day === 0;
-		const todayTime = today.getTime();
-		const isToday =
-			todayTime >= slice.startTime && todayTime <= slice.endTime;
-
-		const classes = [];
-
-		if (isWeekend) {
-			classes.push("weekend");
-		}
-		if (isToday) {
-			classes.push("today");
-		}
-
-		const formatter = {
-			year: function () {
-				return {
-					...slice,
-					header: {
-						...slice.header,
-						content: slice.startDate.getFullYear(),
-						title: slice.startDate,
-					},
-					body: {
-						...slice.body,
-						title: slice.startDate,
-						class: classes.join(" "),
-					},
-				};
-			},
-			month: function () {
-				return {
-					...slice,
-					header: {
-						...slice.header,
-						content: (slice.startDate.getMonth() + 1)
-							.toString()
-							.padStart(2, "0"),
-						title: slice.startDate,
-					},
-					body: {
-						...slice.body,
-						title: slice.startDate,
-						class: classes.join(" "),
-					},
-				};
-			},
-			day: function () {
-				return {
-					...slice,
-					header: {
-						...slice.header,
-						content: slice.startDate.getDate().toString().padStart(2, "0"),
-						title: slice.startDate,
-					},
-					body: {
-						...slice.body,
-						title: slice.startDate,
-						class: classes.join(" "),
-					},
-				};
-			},
-			hour: function () {
-				return {
-					...slice,
-					header: {
-						...slice.header,
-						content: slice.startDate.getHours().toString().padStart(2, "0"),
-						title: slice.startDate,
-					},
-					body: {
-						...slice.body,
-						title: slice.startDate,
-						class: classes.join(" "),
-					},
-				};
-			},
-		};
-
-		return formatter[zoom]();
-	}
-
-	function getHeaders() {
-		const monthNames = [
-			"January",
-			"February",
-			"March",
-			"April",
-			"May",
-			"June",
-			"July",
-			"August",
-			"September",
-			"October",
-			"November",
-			"December",
-		];
-
-		return [
-			{
-				content: "nome",
-			},
-			// {
-			//   content: "nome2",
-			// },
-		];
-	}
 
 	function getRandomDateRange() {
 		const getHours = (timespan) => {

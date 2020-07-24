@@ -10,9 +10,137 @@
   import HeaderGroup from "./HeaderGroup.svelte";
   import HeaderRow from "./HeaderRow.svelte";
 
+  const today = new Date();
+
   export let endTime;
-  export let formatHeader = (s, e, z) => s;
-  export let formatSlice = (s, z) => s;
+  export let formatHeader = (item, zoom) => {
+    const formatters = {
+      year: () => {
+        const content = `${item.startDate.getFullYear()}`;
+        return {
+          ...item,
+          content: content,
+          title: content,
+        };
+      },
+      month: () => {
+        const content = `${item.startDate.getFullYear()}`;
+        return {
+          ...item,
+          content: content,
+          title: content,
+        };
+      },
+      day: () => {
+        const content = `${
+          item.startDate.getMonth() + 1
+        } ${item.startDate.getFullYear()}`;
+        return {
+          ...item,
+          content: content,
+          title: content,
+        };
+      },
+      hour: () => {
+        const content = `${item.startDate.getDate()} ${
+          item.startDate.getMonth() + 1
+        } ${item.startDate.getFullYear()}`;
+        return {
+          ...item,
+          content: content,
+          title: content,
+        };
+      },
+    };
+
+    return formatters[zoom]();
+  };
+  export let formatSlice = (slice, zoom) => {
+    const day = slice.startDate.getDay();
+    const isWeekend = day === 6 || day === 0;
+    const todayTime = today.getTime();
+    const isToday = todayTime >= slice.startTime && todayTime <= slice.endTime;
+
+    const classes = [];
+
+    if (isWeekend) {
+      classes.push("weekend");
+    }
+    if (isToday) {
+      classes.push("today");
+    }
+
+    const formatter = {
+      year: function () {
+        const content = slice.startDate.getFullYear();
+        return {
+          ...slice,
+          header: {
+            ...slice.header,
+            content: content,
+            title: content,
+          },
+          body: {
+            ...slice.body,
+            title: content,
+            class: classes.join(" "),
+          },
+        };
+      },
+      month: function () {
+        const content = (slice.startDate.getMonth() + 1)
+          .toString()
+          .padStart(2, "0");
+        return {
+          ...slice,
+          header: {
+            ...slice.header,
+            content: content,
+            title: content,
+          },
+          body: {
+            ...slice.body,
+            title: content,
+            class: classes.join(" "),
+          },
+        };
+      },
+      day: function () {
+        const content = slice.startDate.getDate().toString().padStart(2, "0");
+        return {
+          ...slice,
+          header: {
+            ...slice.header,
+            content: content,
+            title: content,
+          },
+          body: {
+            ...slice.body,
+            title: content,
+            class: classes.join(" "),
+          },
+        };
+      },
+      hour: function () {
+        const content = slice.startDate.getHours().toString().padStart(2, "0");
+        return {
+          ...slice,
+          header: {
+            ...slice.header,
+            content: content,
+            title: content,
+          },
+          body: {
+            ...slice.body,
+            title: content,
+            class: classes.join(" "),
+          },
+        };
+      },
+    };
+
+    return formatter[zoom]();
+  };
   export let getRelativeDate = {
     year: (date) => {
       let newDate = new Date(date);
@@ -190,7 +318,7 @@
       return _slices;
     },
   };
-  export let headers;
+  export let headers = [{ content: "" }];
   export let rows;
   export let slider;
   export let slices;
