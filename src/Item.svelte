@@ -20,7 +20,7 @@
   function onClick(e, item, index) {
     dispatch("click", {
       event: e,
-      target: "item",
+      type: "item",
       item,
       index,
       slices: slices.filter(

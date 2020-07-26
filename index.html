@@ -6,8 +6,6 @@
 	<meta name="viewport" content="width=device-width,initial-scale=1" />
 
 	<title>Svelte app</title>
-	<!-- <link rel="stylesheet" href="./index.css" /> -->
-
 </head>
 
 <body>
@@ -25,11 +23,11 @@
 	const today = new Date();
 
 	let startTime = utils.addDays(today, -padding);
-	startTime.setHours(0, 0, 0, 0);
+	//startTime.setHours(0, 0, 0, 0);
 	startTime = startTime.getTime();
 
 	let endTime = utils.addDays(today, padding);
-	endTime.setHours(0, 0, 0, 0);
+	//endTime.setHours(0, 0, 0, 0);
 	endTime = endTime.getTime();
 
 	let rows = [];
@@ -165,6 +163,12 @@
 
 	.svelte-gantt .has-child {
 		background-color: #ddd;
+		cursor: pointer;
+	}
+
+	.svelte-gantt .has-child::before {
+		content: '\21b5';
+		transform: scale(-1, 1);
 	}
 </style>
 

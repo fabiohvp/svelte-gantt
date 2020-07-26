@@ -5,7 +5,9 @@
 	"main": "index.js",
 	"scripts": {
 		"build": "rollup -c",
-		"dev": "rollup -cw",
+		"build:watch": "rollup -cw",
+		"http-server": "http-server",
+		"dev": "start yarn build:watch && start yarn http-server",
 		"prepublishOnly": "npm run build"
 	},
 	"devDependencies": {
@@ -23,15 +25,15 @@
 	},
 	"keywords": [
 		"svelte",
-		"table"
+		"gantt"
 	],
 	"files": [
 		"src",
 		"index.mjs",
 		"index.js"
 	],
-	"description": "svelte-gantt - a simple way to render your tables",
-	"version": "1.6.2",
+	"description": "Gantt component made with svelte",
+	"version": "1.0.0",
 	"dependencies": {},
 	"repository": {
 		"type": "git",
