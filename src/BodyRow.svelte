@@ -8,7 +8,6 @@
 
   export let getCoordinates;
   export let getRelativeDate;
-  export let zoom;
 
   const dispatch = createEventDispatcher();
 
@@ -16,6 +15,13 @@
     dispatch("click", e.detail);
   }
 </script>
+
+<style>
+  .body-slices {
+    display: flex;
+    min-width: min-content;
+  }
+</style>
 
 <div class="row relative">
   <div class="body-slices row-height">
@@ -29,7 +35,6 @@
     {getRelativeDate}
     {row}
     {slices}
-    {zoom}
     on:click={onClick} />
 </div>
 
@@ -41,7 +46,6 @@
       {slices}
       {getCoordinates}
       {getRelativeDate}
-      {zoom}
       on:click={onClick} />
   {/each}
 {/if}

@@ -23,7 +23,13 @@
   }
 </script>
 
-<div class="row-height header-side-column">
+<style>
+  .side-menu {
+    overflow: hidden;
+  }
+</style>
+
+<div class="row-height side-menu">
   {#each headers as header}
     <span
       on:click={(e) => onClickCell(e, header)}

@@ -17,11 +17,13 @@
   }
 
   function onClick(e, item) {
-    dispatch("click", {
-      event: e,
-      item,
-      type: "header",
-    });
+    if (e.target.getAttribute("moving") !== "true") {
+      dispatch("click", {
+        event: e,
+        item,
+        type: "header",
+      });
+    }
   }
 </script>
 
@@ -35,7 +37,7 @@
     style={getStyle(item)}
     {...item}>
     <span class:content={true}>
-      {@html item.content || '&nbsp;'}
+      {@html item.content || ''}
     </span>
   </span>
 {/each}

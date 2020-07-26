@@ -1,10 +1,7 @@
 <script>
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import scroll from "./scroll.js";
   import utils from "./utils.js";
-  //   import Header from "./Header.svelte";
-  //   import Row from "./Row.svelte";
-  //   import Rows from "./Rows.svelte";
   import BodyRow from "./BodyRow.svelte";
   import SideMenu from "./SideMenu.svelte";
   import HeaderGroup from "./HeaderGroup.svelte";
@@ -34,7 +31,7 @@
       day: () => {
         const content = `${
           item.startDate.getMonth() + 1
-        } ${item.startDate.getFullYear()}`;
+        }/${item.startDate.getFullYear()}`;
         return {
           ...item,
           content: content,
@@ -42,9 +39,9 @@
         };
       },
       hour: () => {
-        const content = `${item.startDate.getDate()} ${
+        const content = `${
           item.startDate.getMonth() + 1
-        } ${item.startDate.getFullYear()}`;
+        }/${item.startDate.getDate()}/${item.startDate.getFullYear()}`;
         return {
           ...item,
           content: content,
@@ -52,7 +49,6 @@
         };
       },
     };
-
     return formatters[zoom]();
   };
   export let formatSlice = (slice, zoom) => {
@@ -138,29 +134,7 @@
         };
       },
     };
-
     return formatter[zoom]();
-  };
-  export let getRelativeDate = {
-    year: (date) => {
-      let newDate = new Date(date);
-      newDate = new Date(newDate.getFullYear(), 0, 1);
-      return newDate.getTime();
-    },
-    month: (date) => {
-      let newDate = new Date(date);
-      newDate = new Date(newDate.getFullYear(), newDate.getMonth(), 1);
-      return newDate.getTime();
-    },
-    day: (date) => {
-      let newDate = new Date(date);
-      newDate.setHours(0, 0, 0, 0);
-      return newDate.getTime();
-    },
-    hour: (date) => {
-      let newDate = new Date(date);
-      return newDate.getTime();
-    },
   };
   export let getHeader = {
     year: (slices) => {
@@ -320,6 +294,8 @@
   };
   export let headers = [{ content: "" }];
   export let rows;
+  export let scrollBehavior;
+  export let scrollMoveIntervalTimeout = 50;
   export let slider;
   export let slices;
   export let startTime;
@@ -329,13 +305,18 @@
   let headerGroupLoaded = false;
   let resizeCount = 0;
   let rowsContainer;
-  let window;
 
   $: updateSlices(slices, resizeCount, zoom);
 
-  function updateSlices(_slices, resizeCount, zoom) {
-    slices = getSlices[zoom](new Date(startTime), new Date(endTime));
-  }
+  onMount(() => {
+    if (!slider) {
+      slider = window;
+    }
+
+    if (slider !== window) {
+      slider.classList.add("svelte-gantt-slider");
+    }
+  });
 
   function getSlice(startDate, endDate) {
     return {
@@ -361,9 +342,14 @@
     resizeCount++;
   }
 
+  function updateSlices(_slices, resizeCount, zoom) {
+    slices = getSlices[zoom](new Date(startTime), new Date(endTime));
+  }
+
+  //index = 0 equals to Header
   export function getCoordinates(index, startTime, endTime) {
-    const startTimeRelative = getRelativeDate[zoom](startTime);
-    const endTimeRelative = getRelativeDate[zoom](endTime);
+    const startTimeRelative = getRelativeDate(startTime);
+    const endTimeRelative = getRelativeDate(endTime);
 
     const startCell = rowsContainer.querySelector(
       `.slice[index="${index}"][starttime="${startTimeRelative}"]`
@@ -389,11 +375,178 @@
     }
     return undefined;
   }
+
+  export function getRelativeDate(date, _zoom) {
+    if (!_zoom) {
+      _zoom = zoom;
+    }
+
+    const result = {
+      year: (date) => {
+        let newDate = new Date(date);
+        newDate = new Date(newDate.getFullYear(), 0, 1);
+        return newDate.getTime();
+      },
+      month: (date) => {
+        let newDate = new Date(date);
+        newDate = new Date(newDate.getFullYear(), newDate.getMonth(), 1);
+        return newDate.getTime();
+      },
+      day: (date) => {
+        let newDate = new Date(date);
+        newDate.setHours(0, 0, 0, 0);
+        return newDate.getTime();
+      },
+      hour: (date) => {
+        let newDate = new Date(date);
+        return newDate.getTime();
+      },
+    };
+
+    return result[_zoom](date);
+  }
+
+  export function goto(date, behavior) {
+    const relativeDate = getRelativeDate(date);
+    const coords = getCoordinates(0, relativeDate, relativeDate);
+    if (coords) {
+      scrollTo({
+        left: coords.left - (slider.offsetWidth || slider.innerWidth) / 2,
+        top: slider.offsetTop || slider.scrollY,
+        behavior,
+      });
+    } else if (date < slices[0].startTime) {
+      scrollTo({
+        left: 0,
+        top: slider.offsetTop,
+        behavior,
+      });
+    } else if (date > slices[slices.length - 1].startTime) {
+      scrollTo({
+        left: slices[slices.length - 1].startTime,
+        top: slider.offsetTop,
+        behavior,
+      });
+    }
+  }
+
+  let scrollToTimeout;
+
+  function scrollTo(coords) {
+    clearTimeout(scrollToTimeout);
+    scrollToTimeout = setTimeout(function () {
+      slider.scrollTo(coords);
+    }, 100); //prevent scrollTo method being called twice on first time (js bug)
+  }
+
+  function onLoaded() {
+    setTimeout(() => {
+      dispatch("load", { rows, slices });
+    }, 1); //needs timeout otherwise it won't render right in case of goto method is called during this event
+  }
 </script>
 
 <style>
+  .header-side {
+    height: 5em;
+    top: 0;
+  }
+
+  .header-side-group {
+    background-color: #f9fafb;
+    flex: none;
+    height: 100%;
+    left: 0;
+    z-index: 2;
+  }
+
+  .header-side-group :global(.slice) {
+    float: left;
+    width: 100px;
+    height: 100%;
+  }
+
+  .header-slices {
+    display: flex;
+    position: sticky;
+    height: 2.5em;
+    top: 2.5em;
+  }
+
+  .header-top {
+    display: flex;
+    position: sticky;
+    height: 2.5em;
+    top: 0;
+    z-index: 1;
+  }
+
   .header-top-group {
     cursor: ew-resize;
+    top: 0;
+    background-color: #f9fafb;
+    z-index: 1;
+  }
+
+  .noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .sticky {
+    position: sticky;
+  }
+
+  .svelte-gantt {
+    font-size: 14px;
+    position: relative;
+    display: flex;
+    width: max-content;
+    min-width: 100%;
+  }
+
+  .svelte-gantt :global(.align-center) {
+    display: flex;
+    align-items: center;
+  }
+
+  .svelte-gantt :global(.content) {
+    padding: 0.4em;
+  }
+
+  .svelte-gantt :global(.flex) {
+    flex: 1;
+  }
+
+  .svelte-gantt :global(.relative) {
+    position: relative;
+  }
+
+  .svelte-gantt :global(.row-height) {
+    height: 3em;
+  }
+
+  .svelte-gantt :global(.slice) {
+    overflow: hidden;
+    border-right: 1px solid #eee;
+    border-top: 1px solid #eee;
+  }
+
+  .svelte-gantt :global(.weekend) {
+    background-color: #f9fafb;
+  }
+
+  .svelte-gantt :global(.today) {
+    background-color: #f1c40f1a;
+  }
+
+  :global(.svelte-gantt-slider) {
+    position: relative;
+    overflow: auto;
   }
 </style>
 
@@ -421,10 +574,10 @@
       <SideMenu headers={row.headers} bind:row on:click={onClick} />
     {/each}
   </div>
-  <div class="flex">
+  <div class="flex noselect">
     <div
-      class="header-top-group noselect sticky"
-      use:scroll={{ slider, directions: ['x'] }}>
+      class="header-top-group sticky"
+      use:scroll={{ slider, directions: ['x'], behavior: scrollBehavior, moveIntervalTimeout: scrollMoveIntervalTimeout }}>
       <div class="header-top">
         {#if headerGroupLoaded}
           <HeaderGroup
@@ -433,6 +586,11 @@
             {slices}
             {zoom}
             on:click={onClick} />
+          <img
+            style="display:none;"
+            src="svelte-gantt:onload"
+            alt="svelte-gantt:onload"
+            on:error={onLoaded} />
         {/if}
       </div>
       <div class="header-slices">
@@ -442,7 +600,7 @@
     <div
       bind:this={rowsContainer}
       class="rows"
-      use:scroll={{ slider, directions: ['y'] }}>
+      use:scroll={{ slider, directions: ['y'], behavior: scrollBehavior, moveIntervalTimeout: scrollMoveIntervalTimeout }}>
       {#if rowsContainer}
         {#each rows as row, index (row)}
           <BodyRow
@@ -451,7 +609,6 @@
             {slices}
             {getCoordinates}
             {getRelativeDate}
-            {zoom}
             on:click={onClick} />
         {/each}
         {loadHeaderGroup()}

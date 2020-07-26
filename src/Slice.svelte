@@ -8,12 +8,14 @@
   const dispatch = createEventDispatcher();
 
   function onClick(e, slice) {
-    dispatch("click", {
-      event: e,
-      target: "slice",
-      type,
-      slice,
-    });
+    if (e.target.getAttribute("moving") !== "true") {
+      dispatch("click", {
+        event: e,
+        target: "slice",
+        type,
+        slice,
+      });
+    }
   }
 </script>
 
@@ -28,6 +30,6 @@
   {index}
   {...slice[type]}>
   <span class:content={true}>
-    {@html slice[type].content || '&nbsp;'}
+    {@html slice[type].content || ''}
   </span>
 </span>
