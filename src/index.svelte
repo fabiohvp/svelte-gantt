@@ -536,10 +536,6 @@
     border-top: 1px solid #eee;
   }
 
-  .svelte-gantt :global(.body-slices .slice, .header-top .slice) {
-		 content-visibility: auto; /*avoid rendering when slice is outside view*/
-	}
-  
   .svelte-gantt :global(.weekend) {
     background-color: #f9fafb;
   }
